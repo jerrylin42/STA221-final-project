@@ -1,6 +1,6 @@
 ---
 title: "Research Questions"
-author: "Team name - Team member 1, Team member 2, Team member 3, Team member 4"
+author: "Rated R- Carlie Scheer, Christina Lee, Samir Travers, Jerry Lin"
 format: pdf
 execute: 
   warning: false
@@ -10,10 +10,60 @@ editor: visual
 
 ## Research Question 1
 
+Research question:
+
+What factors and metrics contribute the most to the success/popularity of a TV show/movie?
+
+Target population:
+
+Entertainment industry / media producers who want to maximize viewership
+
+Motivation/importance:
+
+Help create better shows and movies to benefit both the audience watching and companies who create the media; assist them in determining what factors to focus on
+
+Type of data to use:
+
+Data from Netflix, Hulu, Disney+, PBS Kids, etc. that contains popularity scores, content descriptions, release years, budget, ratings, etc.
+
 \pagebreak
 
 ## Research Question 2
 
+Research question:
+
+What impacts the price of a college’s tuition?
+
+Target population:
+
+Prospective high school students choosing a college 
+
+Motivation/importance:
+
+Help prospective high school students understand college tuition prices and the “worth” of a college based on the cost 
+
+Type of data to use:
+
+Data with college metrics such as population, faculty, alumni, graduation rate, acceptance rate, etc.
+
 \pagebreak
 
 ## Research Question 3
+
+Research question:
+
+What factors cause couples to get divorced?
+
+Target Population:
+
+Couples questioning their marriage
+
+Motivation/importance:
+
+Help couples decide if they should move on from their current marriage partner 
+
+Type of data to use:
+
+Data from marriage counselors, lawyers, and church pastors; information about desire to marry, age gap, attractiveness, education, income, and more
+
+\
