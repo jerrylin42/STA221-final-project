@@ -1,0 +1,22 @@
+---
+title: "Your project title"
+author: "Team Name: Team member 1, Team member 2, Team member 3, Team member 4"
+date: "Update date"
+format: pdf
+execute: 
+  warning: false
+  message: false
+  echo: false
+editor: visual
+---
+
+```{r}
+#| label: load packages and data
+
+```
+
+Your written report goes here!
+
+::: callout-important
+Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
+:::

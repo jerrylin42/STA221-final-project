@@ -1,0 +1,38 @@
+---
+title: "Project Proposal"
+author: "Team name - Team member 1, Team member 2, Team member 3, Team member 4"
+format: pdf
+execute: 
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: load-pkg-data
+library(tidyverse)
+library(tidymodels)
+# add other packages as needed
+
+# add code to load data
+```
+
+## Introduction
+
+...
+
+## Data description
+
+...
+
+## Exploratory data analysis
+
+...
+
+## Analysis approach
+
+...
+
+## Data dictionary
+
+The data dictionary can be found [here](ADD%20LINK!!!) \[Update the link and remove this note!\]
