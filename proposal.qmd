@@ -12,9 +12,13 @@ editor: visual
 #| label: load-pkg-data
 library(tidyverse)
 library(tidymodels)
+library(knitr)
 # add other packages as needed
 
 # add code to load data
+IMDB_Movies <- read_csv("data/imdb_top_1000.csv")
+
+glimpse(IMDB_Movies)
 ```
 
 ## Introduction
