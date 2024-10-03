@@ -1,6 +1,6 @@
 ---
 title: "Project Proposal"
-author: "Team name - Team member 1, Team member 2, Team member 3, Team member 4"
+author: "Rated R - Carlie Scheer, Christina Lee, Jerry Lin, Samir Travers"
 format: pdf
 execute: 
   warning: false
@@ -13,12 +13,9 @@ editor: visual
 library(tidyverse)
 library(tidymodels)
 library(knitr)
-# add other packages as needed
 
-# add code to load data
-IMDB_Movies <- read_csv("data/final_movie_data.csv")
-
-glimpse(IMDB_Movies)
+library(readr)
+final_movie_data <- read_csv("data/final_movie_data.csv")
 ```
 
 ## Introduction
