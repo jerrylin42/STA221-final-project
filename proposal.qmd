@@ -81,7 +81,7 @@ movies |>
 
 ```
 
-The distribution of revenue is strongly skewed to the right. The boxplot suggests that we have a significant amount of outliers. The median is \$18,553,131 and our interquartile range is \$48,844,861. We will need to adjust our filters in order to get less skewed data.
+The distribution of revenue is strongly skewed to the right. The boxplot suggests that we have a significant amount of outliers. The median is \$18,553,131 and our interquartile range is \$48,844,861.
 
 ## Analysis approach
 
@@ -101,7 +101,7 @@ genres: This is a genre or list of genres associated with the movie. We expect m
 
 Method of approach:
 
-We plan to use multiple linear regression to predict gross revenue.
+We plan to use multiple linear regression to predict gross revenue, but we will log transform gross revenue because we can see from our EDA that revenue is extremely skewed in its original form.
 
 ## Data dictionary
 
