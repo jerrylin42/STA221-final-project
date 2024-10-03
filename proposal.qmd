@@ -105,4 +105,4 @@ We plan to use multiple linear regression to predict gross revenue.
 
 ## Data dictionary
 
-The data dictionary can be found <https://labs-az-08.oit.duke.edu:30174/files/project-Rated-R/data/README.html>
+The data dictionary can be found here: [data/README.md](data/README.md)
