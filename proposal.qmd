@@ -16,7 +16,7 @@ library(knitr)
 # add other packages as needed
 
 # add code to load data
-IMDB_Movies <- read_csv("data/imdb_top_1000.csv")
+IMDB_Movies <- read_csv("data/final_movie_data.csv")
 
 glimpse(IMDB_Movies)
 ```
@@ -51,4 +51,4 @@ We filtered the dataset because the original dataset was far too large to be abl
 
 ## Data dictionary
 
-The data dictionary can be found [here](ADD%20LINK!!!) \[Update the link and remove this note!\]
+The data dictionary can be found <https://labs-az-08.oit.duke.edu:30174/files/project-Rated-R/data/README.html>

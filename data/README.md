@@ -1,10 +1,10 @@
 # Data Dictionary for TMDb Dataset
 
-If using an external dataset (that doesn't come in an R package), place data file(s) in this folder.
+**The data description and variable definitions are from the Kaggle Repository: https://www.kaggle.com/datasets/asaniczka/tmdb-movies-dataset-2023-930k-movies/data**
 
-The data comes from Kaggle.
+The data comes from the TMDB (The Movie Database) database.
 
-The TMDB Movie Database (TMDb) is a comprehensive dataset that provides extensive information about movies, including attributes such as ID, Title, Average Vote, Vote Count, Status, Release Date, Revenue, Runtime, and more.
+> The TMDB Movie Database (TMDb) is a comprehensive dataset that provides extensive information about movies, including attributes such as ID, Title, Average Vote, Vote Count, Status, Release Date, Revenue, Runtime, and more.
 
 ## final_movie_data
 
