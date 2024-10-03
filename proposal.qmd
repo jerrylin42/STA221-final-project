@@ -15,7 +15,7 @@ library(tidymodels)
 library(knitr)
 
 library(readr)
-final_movie_data <- read_csv("data/final_movie_data.csv")
+movies <- read_csv("data/final_vote_filtered_movie_data.csv")
 ```
 
 ## Introduction
@@ -41,6 +41,13 @@ There are 953629 observations in this dataset, each representing a single film. 
 ## Exploratory data analysis
 
 We filtered the dataset because the original dataset was far too large to be able to run efficiently in RStudio: Firstly, we filtered to only include recent movies, from 2019 to 2025. Then, we filtered for movies where the original language is english. Lastly, we filtered for where the movies had more than 100 votes. (EDIT THIS, THIS IS PART OF EDA, AND ADD ON THAT WE WILL FILTER FURTHER BY THINGS SUCH AS RELEASE STATUS)
+
+```{r}
+movies <- movies |>
+  filter(revenue > 0)
+
+
+```
 
 ## Analysis approach
 
