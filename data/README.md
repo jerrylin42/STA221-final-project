@@ -6,7 +6,7 @@ The data comes from Kaggle.
 
 The TMDB Movie Database (TMDb) is a comprehensive dataset that provides extensive information about movies, including attributes such as ID, Title, Average Vote, Vote Count, Status, Release Date, Revenue, Runtime, and more.
 
-## Filtered_movie_data
+## final_movie_data
 
 | variable               | class  | description                                                                                                                 |
 |------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------|
