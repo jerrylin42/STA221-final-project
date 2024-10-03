@@ -40,14 +40,48 @@ There are 953629 observations in this dataset, each representing a single film. 
 
 ## Exploratory data analysis
 
-We filtered the dataset because the original dataset was far too large to be able to run efficiently in RStudio: Firstly, we filtered to only include recent movies, from 2019 to 2025. Then, we filtered for movies where the original language is english. Lastly, we filtered for where the movies had more than 100 votes. (EDIT THIS, THIS IS PART OF EDA, AND ADD ON THAT WE WILL FILTER FURTHER BY THINGS SUCH AS RELEASE STATUS)
+We filtered the dataset because the original dataset was far too large to be able to run efficiently in RStudio; as such, we filtered for where the movies had more than 100 votes, meaning more than 100 people submitted ratings for the movie.
+
+We are going to transform the variables spoken_languages and genres. For spoken_languages, we want to make a categorical variable based on whether more than one language is spoken in the movie or not (True = more than one language, False = just one language). For genres, we want to take a similar approach to see whether the movie is tagged for more than one genre (True = more than one genre, False = just one genre). Additionally, we want to transform the month, date, year format of the release date to just be the year. Lastly, we are going to remove all 0s in the revenue column because we are not able to accurately impute the values; we have evidence to suggest that the original author of the dataset just put 0s instead of NAs. 
 
 ```{r}
 movies <- movies |>
   filter(revenue > 0)
+  # filter(revenue > 0 & budget > 0) |>
+  # filter(revenue > 3 * budget)
 
+movies |>
+  ggplot(aes(x = revenue)) +
+  geom_histogram(bins = 20) + 
+  labs(
+    title = "Histogram of Revenue",
+    x = "Revenue (in billions of dollars)", 
+    y = "Count"
+  ) +
+  scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
+
+movies |>
+  ggplot(aes(x = revenue)) +
+  geom_boxplot() + 
+  labs(
+    title = "Boxplot of Revenue",
+    x = "Revenue (in billions of dollars)"
+  ) +
+  scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
+
+movies |>
+  summarise(min = min(revenue), 
+            q1 = quantile(revenue, 0.25), 
+            median = median(revenue), 
+            q3 = quantile(revenue, 0.75), 
+            max = max(revenue), 
+            mean = mean(revenue), 
+            sd = sd(revenue)) |>
+  kable(digits = 3)
 
 ```
+
+The distribution of revenue is strongly skewed to the right. The boxplot suggests that we have a significant amount of outliers. The median is \$18,553,131 and our interquartile range is \$48,844,861. We will need to adjust our filters in order to get less skewed data.
 
 ## Analysis approach
 
