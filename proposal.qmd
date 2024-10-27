@@ -14,8 +14,8 @@ editor: visual
 library(tidyverse)
 library(tidymodels)
 library(knitr)
-
 library(readr)
+
 movies <- read_csv("data/final_vote_filtered_movie_data.csv")
 ```
 
@@ -33,20 +33,24 @@ Hypotheses: We hypothesize movies that have high popularity scores and ratings, 
 
 The source of the dataset is taken from TMDb (The Movie Database), which is an online, public database for movies that contains information such as ratings, runtime, cast, director, and box office performance. We discovered this dataset on Kaggle, and it is updated daily by user asaniczka, who takes the data from TMDb [@asaniczka2023].
 
-There are 953629 observations in this dataset, each representing a single film. There are 24 columns in this dataset, with some of the most important being the name (an identifier), release year, runtime, genres, rating, votes, and revenue.
+There were 953629 observations in the original dataset, each representing a single film. There were 24 columns in this dataset, with some of the most important being the name (an identifier), release year, runtime, genres, rating, votes, and revenue.
 
 ## Exploratory data analysis
 
-We filtered the dataset because the original dataset was far too large to be able to run efficiently in RStudio; as such, we filtered for where the movies had more than 100 votes, meaning more than 100 people submitted ratings for the movie. After filtering, there are now 9266 observations.
+We filtered the original dataset outside of this project first because the original dataset of almost 1 million rows was far too large to be able to run efficiently in RStudio; as such, we filtered for where the movies had more than 100 votes, meaning more than 100 people submitted ratings for the movie. After filtering, there are now 18086 observations, and we were able to import this filtered dataset into Rstudio (The file name was "final_vote_filtered_movie_data.csv").
 
-We are going to transform the variables spoken_languages and genres. For spoken_languages, we want to make a categorical variable based on whether more than one language is spoken in the movie or not (True = more than one language, False = just one language). For genres, we want to take a similar approach to see whether the movie is tagged for more than one genre (True = more than one genre, False = just one genre). Additionally, we want to transform the month, date, year format of the release date to just be the year. Lastly, we are going to remove all 0s in the revenue column because we are not able to accurately impute the values; we have evidence to suggest that the original author of the dataset just put 0s instead of NAs. 
+We are going to transform the variables spoken_languages and genres. For spoken_languages, we want to make a categorical variable based on whether more than one language is spoken in the movie or not (True = more than one language, False = just one language). For genres, we want to take a similar approach to see whether the movie is tagged for more than one genre (True = more than one genre, False = just one genre). Additionally, we want to transform the month, date, year format of the release date to just be the year. Lastly, before we begin EDA and further analysis, we are going to remove all 0s in the revenue column because we are not able to accurately impute the values; we have evidence to suggest that the original author of the dataset just put 0s instead of NAs. 
 
 ```{r}
+#Use this code block to perform edits on the df (such as transforming years, doing the true/false stuff)
+
+#Question to ask: when copying from proposal to written report qmd, do we need everything from the proposal or only the intro section? 
+
 movies <- movies |>
   filter(revenue > 0)
-  # filter(revenue > 0 & budget > 0) |>
-  # filter(revenue > 3 * budget)
+```
 
+```{r}
 movies |>
   ggplot(aes(x = revenue)) +
   geom_histogram(bins = 20) + 

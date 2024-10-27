@@ -18,15 +18,11 @@ library(knitr)
 library(readr)
 
 movies <- read_csv("data/final_vote_filtered_movie_data.csv")
-movies <- movies |>
-  filter(revenue > 0)
 ```
 
 ## Introduction
 
-Movies have been at the heart of pop culture for nearly a century. And while movies have changed a lot over the years, varying in length, theme, due to technological advances, and more, one thing has never changed–movies have remained as a dominant part of the entertainment industry. Yet, ever since the COVID-19 pandemic, the North American box office for movies has not recovered–it seems that people just aren’t going to movies as much as they used to. Domestic box office gross revenue in 2019 reached nearly \$11.4 billion, while the yearly total from 2023 topped off at \$8.9 billion after a very slow two years in 2020 and 2021 (Box Office Mojo). With moviegoers back on the rise, the film industry and box offices are hopeful to end the decade on a high note and return back to their original state. As such, we are interested in investigating the trends in gross revenue for top movies and how various elements impact the amount of money that a movie makes.
-
-“Domestic Yearly Box Office.” Box Office Mojo, 2 Oct. 2024, www.boxofficemojo.com/year/. Accessed 2 Oct. 2024.
+Movies have been at the heart of pop culture for nearly a century. And while movies have changed a lot over the years, varying in length, theme, due to technological advances, and more, one thing has never changed–movies have remained as a dominant part of the entertainment industry. Yet, ever since the COVID-19 pandemic, the North American box office for movies has not recovered–it seems that people just aren’t going to movies as much as they used to. As mentioned in [@boxofficemojo2024], domestic box office gross revenue in 2019 reached nearly \$11.4 billion, while the yearly total from 2023 topped off at \$8.9 billion after a very slow two years in 2020 and 2021. With moviegoers back on the rise, the film industry and box offices are hopeful to end the decade on a high note and return back to their original state. As such, we are interested in investigating the trends in gross revenue for top movies and how various elements impact the amount of money that a movie makes.
 
 Research Question: What are the key factors and metrics that most significantly influence a movie's gross revenue?
 
@@ -36,23 +32,26 @@ Hypotheses: We hypothesize movies that have high popularity scores and ratings, 
 
 ## Data description
 
-The source of the dataset is taken from TMDb (The Movie Database), which is an online, public database for movies that contains information such as ratings, runtime, cast, director, and box office performance.
+The source of the dataset is taken from TMDb (The Movie Database), which is an online, public database for movies that contains information such as ratings, runtime, cast, director, and box office performance. We discovered this dataset on Kaggle, and it is updated daily by user asaniczka, who takes the data from TMDb [@asaniczka2023].
 
-We discovered this dataset at this link on Kaggle: <https://www.kaggle.com/datasets/asaniczka/tmdb-movies-dataset-2023-930k-movies> and it is updated daily by user asaniczka, who takes the data from TMDb. 
-
-There are 953629 observations in this dataset, each representing a single film. There are 24 columns in this dataset, with some of the most important being the name (an identifier), release year, runtime, genres, rating, votes, and revenue.
+There were 953629 observations in the original dataset, each representing a single film. There were 24 columns in this dataset, with some of the most important being the name (an identifier), release year, runtime, genres, rating, votes, and revenue.
 
 ## Exploratory data analysis
 
-We filtered the dataset because the original dataset was far too large to be able to run efficiently in RStudio; as such, we filtered for where the movies had more than 100 votes, meaning more than 100 people submitted ratings for the movie. After filtering, there are now 9266 observations.
+We filtered the original dataset outside of this project first because the original dataset of almost 1 million rows was far too large to be able to run efficiently in RStudio; as such, we filtered for where the movies had more than 100 votes, meaning more than 100 people submitted ratings for the movie. After filtering, there are now 18086 observations, and we were able to import this filtered dataset into Rstudio (The file name was "final_vote_filtered_movie_data.csv").
 
-We are going to transform the variables spoken_languages and genres. For spoken_languages, we want to make a categorical variable based on whether more than one language is spoken in the movie or not (True = more than one language, False = just one language). For genres, we want to take a similar approach to see whether the movie is tagged for more than one genre (True = more than one genre, False = just one genre). Additionally, we want to transform the month, date, year format of the release date to just be the year. Lastly, we are going to remove all 0s in the revenue column because we are not able to accurately impute the values; we have evidence to suggest that the original author of the dataset just put 0s instead of NAs. 
-
-**Before the log transformation:**
+We are going to transform the variables spoken_languages and genres. For spoken_languages, we want to make a categorical variable based on whether more than one language is spoken in the movie or not (True = more than one language, False = just one language). For genres, we want to take a similar approach to see whether the movie is tagged for more than one genre (True = more than one genre, False = just one genre). Additionally, we want to transform the month, date, year format of the release date to just be the year. Lastly, before we begin EDA and further analysis, we are going to remove all 0s in the revenue column because we are not able to accurately impute the values; we have evidence to suggest that the original author of the dataset just put 0s instead of NAs. 
 
 ```{r}
-#| label: pre-log-transform
+#Use this code block to perform edits on the df (such as transforming years, doing the true/false stuff)
 
+#Question to ask: when copying from proposal to written report qmd, do we need everything from the proposal or only the intro section? 
+
+movies <- movies |>
+  filter(revenue > 0)
+```
+
+```{r}
 movies |>
   ggplot(aes(x = revenue)) +
   geom_histogram(bins = 20) + 
@@ -85,14 +84,6 @@ movies |>
 ```
 
 The distribution of revenue is strongly skewed to the right. The boxplot suggests that we have a significant amount of outliers. The median is \$18,553,131 and our interquartile range is \$48,844,861.
-
-**After the log transform:**
-
-```{r}
-#| label: post-log-transform
-
-# add code here 
-```
 
 ## Analysis approach
 
