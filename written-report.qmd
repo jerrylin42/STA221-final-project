@@ -22,26 +22,6 @@ movies <- movies |>
   filter(revenue > 0)
 ```
 
----
-title: "Project Proposal"
-author: "Rated R - Carlie Scheer, Christina Lee, Jerry Lin, Samir Travers"
-format: pdf
-execute: 
-  warning: false
-  message: false
-editor: visual
----
-
-```{r}
-#| label: load-pkg-data
-library(tidyverse)
-library(tidymodels)
-library(knitr)
-
-library(readr)
-movies <- read_csv("data/final_vote_filtered_movie_data.csv")
-```
-
 ## Introduction
 
 Movies have been at the heart of pop culture for nearly a century. And while movies have changed a lot over the years, varying in length, theme, due to technological advances, and more, one thing has never changed–movies have remained as a dominant part of the entertainment industry. Yet, ever since the COVID-19 pandemic, the North American box office for movies has not recovered–it seems that people just aren’t going to movies as much as they used to. Domestic box office gross revenue in 2019 reached nearly \$11.4 billion, while the yearly total from 2023 topped off at \$8.9 billion after a very slow two years in 2020 and 2021 (Box Office Mojo). With moviegoers back on the rise, the film industry and box offices are hopeful to end the decade on a high note and return back to their original state. As such, we are interested in investigating the trends in gross revenue for top movies and how various elements impact the amount of money that a movie makes.
@@ -68,11 +48,10 @@ We filtered the dataset because the original dataset was far too large to be abl
 
 We are going to transform the variables spoken_languages and genres. For spoken_languages, we want to make a categorical variable based on whether more than one language is spoken in the movie or not (True = more than one language, False = just one language). For genres, we want to take a similar approach to see whether the movie is tagged for more than one genre (True = more than one genre, False = just one genre). Additionally, we want to transform the month, date, year format of the release date to just be the year. Lastly, we are going to remove all 0s in the revenue column because we are not able to accurately impute the values; we have evidence to suggest that the original author of the dataset just put 0s instead of NAs. 
 
+**Before the log transformation:**
+
 ```{r}
-movies <- movies |>
-  filter(revenue > 0)
-  # filter(revenue > 0 & budget > 0) |>
-  # filter(revenue > 3 * budget)
+#| label: pre-log-transform
 
 movies |>
   ggplot(aes(x = revenue)) +
@@ -106,6 +85,14 @@ movies |>
 ```
 
 The distribution of revenue is strongly skewed to the right. The boxplot suggests that we have a significant amount of outliers. The median is \$18,553,131 and our interquartile range is \$48,844,861.
+
+**After the log transform:**
+
+```{r}
+#| label: post-log-transform
+
+# add code here 
+```
 
 ## Analysis approach
 
