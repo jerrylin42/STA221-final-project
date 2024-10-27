@@ -1,4 +1,0 @@
----
-title: "Bibliography"
-bibliography: references.bib
----
