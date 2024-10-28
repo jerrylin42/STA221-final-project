@@ -141,7 +141,42 @@ movies |>
 ```
 
 ## Chrisie Section
-
+```{r}
+# vote
+movies |>
+  ggplot(aes(x = vote_average, y = log_revenue)) +
+  geom_point() + 
+  labs(
+    title = "Vote Average vs. Revenue",
+    x = "Vote Average",
+    y = "Revenue (in billions of dollars)"
+  ) +
+  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+```
+```{r}
+# runtime
+movies |>
+  ggplot(aes(x = runtime, y = log_revenue)) +
+  geom_point() + 
+  labs(
+    title = "Runtime vs. Revenue",
+    x = "Runtime (minutes)",
+    y = "Revenue (in billions of dollars)"
+  ) +
+  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+```
+```{r}
+# release date
+movies |>
+  ggplot(aes(x = year, y = log_revenue)) +
+  geom_point() + 
+  labs(
+    title = "Release Date vs. Revenue",
+    x = "Release Date (year)",
+    y = "Revenue (in billions of dollars)"
+  ) +
+  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+```
 ## Interaction
 
 ::: callout-important
