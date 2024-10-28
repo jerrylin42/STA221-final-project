@@ -47,27 +47,33 @@ We are going to transform the variables spoken_languages and genres. For spoken_
 ```{r}
 #Question to ask: when copying from proposal to written report qmd, do we need everything from the proposal or only the intro section? 
 
-movies <- movies |>
-  filter(revenue > 0)
 
-movies <- movies |>
-  mutate(multi_language = if_else(str_detect(spoken_languages, ','), TRUE, FALSE)) |>
-  mutate(log_revenue = log(movies$revenue))
 
+#New column where TRUE for multiple languages, FALSE for 1 language
+movies <- movies |>
+  mutate(multi_language = if_else(str_detect(spoken_languages, ','), TRUE, FALSE))
+
+#New column where TRUE for multiple genres, FALSE for 1 genre
 movies <- movies |>
   mutate(multi_genre = if_else(str_detect(genres, ','), TRUE, FALSE))
 
+#New column for year of the movie release
 movies <- movies |>
   mutate(year = as.numeric(format(as.Date(release_date), "%Y")))
 
+#Filter down df for movies where revenue is not 0
+movies <- movies |>
+  filter(revenue > 0)
+
+#Drop NAs for multi-languages
 na_rows <- movies |> 
   filter(is.na(multi_language))
-
 num_na_rows <- nrow(na_rows) # 4 rows with NAs
-
 movies <- movies |> 
   drop_na(multi_language)
 ```
+
+Below is basic initial EDA of our untransformed response variable, revenue.
 
 ```{r}
 movies |>
@@ -99,6 +105,7 @@ movies |>
             sd = sd(revenue)) |>
   kable(digits = 3)
 
+
 ```
 
 The distribution of revenue is strongly skewed to the right. The boxplot suggests that we have a significant amount of outliers. The median is \$18,553,131 and our interquartile range is \$48,844,861.
@@ -122,6 +129,11 @@ genres: This is a genre or list of genres associated with the movie. We expect m
 Method of approach:
 
 We plan to use multiple linear regression to predict gross revenue, but we will log transform gross revenue because we can see from our EDA that revenue is extremely skewed in its original form.
+
+```{r}
+movies <- movies |>
+  mutate(log_revenue = log(movies$revenue))
+```
 
 ## Data dictionary
 
