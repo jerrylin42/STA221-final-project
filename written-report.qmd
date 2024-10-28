@@ -49,6 +49,10 @@ We are going to transform the variables spoken_languages and genres. For spoken_
 
 movies <- movies |>
   filter(revenue > 0)
+
+movies$greater_one_languages <- sapply(movies$spoken_languages, function(x) length(unlist(strsplit(x, ", "))) > 1)
+
+movies$greater_one_genre <- sapply(movies$genres, function(x) length(unlist(strsplit(x, ", "))) > 1)
 ```
 
 ```{r}
@@ -112,16 +116,12 @@ The data dictionary can be found here: [data/README.md](data/README.md)
 ## Univariate EDA
 
 ## Bivariate EDA
+
 ## Carlie Section
-
-
-
 
 ## Chrisie Section
 
 ## Interaction
-
-
 
 ::: callout-important
 Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
