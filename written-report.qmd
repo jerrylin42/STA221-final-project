@@ -132,8 +132,6 @@ movies |>
 
 ## Carlie Section
 
-## Carlie Section
-
 ```{r}
 
 movies |>
