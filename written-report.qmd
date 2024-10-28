@@ -76,6 +76,8 @@ movies <- movies |>
 Below is basic initial EDA of our untransformed response variable, revenue.
 
 ```{r}
+
+#Histogram
 movies |>
   ggplot(aes(x = revenue)) +
   geom_histogram(bins = 20) + 
@@ -86,6 +88,7 @@ movies |>
   ) +
   scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
 
+#Boxplot
 movies |>
   ggplot(aes(x = revenue)) +
   geom_boxplot() + 
@@ -95,6 +98,7 @@ movies |>
   ) +
   scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
 
+#Summary statistics 
 movies |>
   summarise(min = min(revenue), 
             q1 = quantile(revenue, 0.25), 
