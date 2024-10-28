@@ -140,7 +140,7 @@ movies |>
 ## Carlie Section
 
 ```{r}
-# num languages
+# spoken languages
 
 movies |>
   ggplot(aes(x = multi_language, y = log_revenue)) +
@@ -151,10 +151,35 @@ movies |>
        ) + 
   scale_x_discrete(labels = c("FALSE" = "One", "TRUE" = "More than One"))
 
+```
 
+```{r}
+# genres 
 
+movies |>
+  ggplot(aes(x = multi_genre, y = log_revenue)) +
+  geom_boxplot() + 
+  labs(x = "Number of Genres in Movie", 
+       y = "log(Revenue)", 
+       title = "Genres in Movie vs. log(Revenue)"
+       ) + 
+  scale_x_discrete(labels = c("FALSE" = "One", "TRUE" = "More than One"))
 
+```
 
+```{r}
+# budget
+
+movies |>
+  ggplot(aes(x = budget, y = log_revenue)) +
+  geom_point() + 
+  labs(
+    title = "Budget vs. log(Revenue)",
+    x = "Budget (in millions of dollars)",
+    y = "log(Revenue)"
+  ) +
+  scale_x_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
 ```
 
 ## Chrisie Section
