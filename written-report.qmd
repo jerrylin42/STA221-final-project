@@ -132,13 +132,18 @@ movies |>
 
 ## Carlie Section
 
-## Carlie Section
-
 ```{r}
 
 movies |>
-  ggplot(aes(x = log(revenue), color = greater_one_languages)) +
-  geom_histogram()
+  ggplot(aes(x = greater_one_languages, y = log_revenue)) +
+  geom_boxplot() + 
+  labs(x = "Number of Languages Spoken in Movie", 
+       y = "log(Revenue)", 
+       title = "Spoken Langauges in Movie vs. log(Revenue)"
+       ) + 
+  scale_x_discrete(labels = c("FALSE" = "One", "TRUE" = "More than One"))
+
+
 ```
 
 ## Chrisie Section
