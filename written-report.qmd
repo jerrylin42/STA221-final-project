@@ -121,13 +121,13 @@ The data dictionary can be found here: [data/README.md](data/README.md)
 ## Univariate EDA
 
 ## Bivariate EDA
-
-## Carlie Section
-
 ```{r}
 movies |>
-  
+  select(vote_average, greater_one_languages, budget, runtime, release_date, greater_one_genre) |>
+  ggpairs()
 ```
+## Carlie Section
+
 
 ## Chrisie Section
 
