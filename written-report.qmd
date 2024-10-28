@@ -129,10 +129,9 @@ movies |>
   select(vote_average, greater_one_languages, budget, runtime, release_date, greater_one_genre) |>
   ggpairs()
 ```
-<<<<<<< HEAD
 
 ## Carlie Section
-=======
+
 
 ## Carlie Section
 
@@ -142,7 +141,6 @@ movies |>
   ggplot(aes(x = log(revenue), color = greater_one_languages)) +
   geom_histogram()
 ```
->>>>>>> f167fb2a3222a9b95bc46a4cff616552d650a255
 
 ## Chrisie Section
 ```{r}
