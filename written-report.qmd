@@ -53,6 +53,8 @@ movies <- movies |>
 movies <- movies |>
   mutate(multi_language = if_else(str_detect(spoken_languages, ','), TRUE, FALSE))
 
+  mutate(log_revenue = log(movies$revenue))
+
 movies <- movies |>
   mutate(multi_genre = if_else(str_detect(genres, ','), TRUE, FALSE))
 
@@ -127,11 +129,58 @@ movies |>
   select(vote_average, greater_one_languages, budget, runtime, release_date, greater_one_genre) |>
   ggpairs()
 ```
+<<<<<<< HEAD
+
+## Carlie Section
+=======
 
 ## Carlie Section
 
-## Chrisie Section
+```{r}
 
+movies |>
+  ggplot(aes(x = log(revenue), color = greater_one_languages)) +
+  geom_histogram()
+```
+>>>>>>> f167fb2a3222a9b95bc46a4cff616552d650a255
+
+## Chrisie Section
+```{r}
+# vote
+movies |>
+  ggplot(aes(x = vote_average, y = log_revenue)) +
+  geom_point() + 
+  labs(
+    title = "Vote Average vs. Revenue",
+    x = "Vote Average",
+    y = "Revenue (in billions of dollars)"
+  ) +
+  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+```
+```{r}
+# runtime
+movies |>
+  ggplot(aes(x = runtime, y = log_revenue)) +
+  geom_point() + 
+  labs(
+    title = "Runtime vs. Revenue",
+    x = "Runtime (minutes)",
+    y = "Revenue (in billions of dollars)"
+  ) +
+  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+```
+```{r}
+# release date
+movies |>
+  ggplot(aes(x = year, y = log_revenue)) +
+  geom_point() + 
+  labs(
+    title = "Release Date vs. Revenue",
+    x = "Release Date (year)",
+    y = "Revenue (in billions of dollars)"
+  ) +
+  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+```
 ## Interaction
 
 ::: callout-important
