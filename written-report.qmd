@@ -149,9 +149,9 @@ movies |>
   ggplot(aes(x = vote_average, y = log_revenue)) +
   geom_point() + 
   labs(
-    title = "Vote Average vs. Revenue",
+    title = "Vote Average vs. log(Revenue)",
     x = "Vote Average",
-    y = "Revenue (in billions of dollars)"
+    y = "log(Revenue) (in billions of dollars)"
   ) +
   scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
 ```
@@ -162,9 +162,9 @@ movies |>
   ggplot(aes(x = runtime, y = log_revenue)) +
   geom_point() + 
   labs(
-    title = "Runtime vs. Revenue",
+    title = "Runtime vs. log(Revenue)",
     x = "Runtime (minutes)",
-    y = "Revenue (in billions of dollars)"
+    y = "log(Revenue) (in billions of dollars)"
   ) +
   scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
 ```
@@ -175,9 +175,9 @@ movies |>
   ggplot(aes(x = year, y = log_revenue)) +
   geom_point() + 
   labs(
-    title = "Release Date vs. Revenue",
+    title = "Release Date vs. log(Revenue)",
     x = "Release Date (year)",
-    y = "Revenue (in billions of dollars)"
+    y = "log(Revenue) (in billions of dollars)"
   ) +
   scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
 ```
