@@ -45,16 +45,16 @@ We filtered the original dataset outside of this project first because the origi
 We are going to transform the variables spoken_languages and genres. For spoken_languages, we want to make a categorical variable based on whether more than one language is spoken in the movie or not (True = more than one language, False = just one language). For genres, we want to take a similar approach to see whether the movie is tagged for more than one genre (True = more than one genre, False = just one genre). Additionally, we want to transform the month, date, year format of the release date to just be the year. Lastly, before we begin EDA and further analysis, we are going to remove all 0s in the revenue column because we are not able to accurately impute the values; we have evidence to suggest that the original author of the dataset just put 0s instead of NAs. 
 
 ```{r}
-#Use this code block to perform edits on the df (such as transforming years, doing the true/false stuff)
-
 #Question to ask: when copying from proposal to written report qmd, do we need everything from the proposal or only the intro section? 
 
 movies <- movies |>
   filter(revenue > 0)
 
-movies$greater_one_languages <- sapply(movies$spoken_languages, function(x) length(unlist(strsplit(x, ", "))) > 1)
+movies <- movies |>
+  mutate(multi_language = if_else(str_detect(spoken_languages, ','), TRUE, FALSE))
 
-movies$greater_one_genre <- sapply(movies$genres, function(x) length(unlist(strsplit(x, ", "))) > 1)
+movies <- movies |>
+  mutate(multi_genre = if_else(str_detect(genres, ','), TRUE, FALSE))
 
 movies <- movies |>
   mutate(year = as.numeric(format(as.Date(release_date), "%Y")))
@@ -121,13 +121,14 @@ The data dictionary can be found here: [data/README.md](data/README.md)
 ## Univariate EDA
 
 ## Bivariate EDA
+
 ```{r}
 movies |>
   select(vote_average, greater_one_languages, budget, runtime, release_date, greater_one_genre) |>
   ggpairs()
 ```
-## Carlie Section
 
+## Carlie Section
 
 ## Chrisie Section
 
