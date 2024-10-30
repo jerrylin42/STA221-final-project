@@ -42,12 +42,10 @@ There were 953629 observations in the original dataset, each representing a sing
 
 We filtered the original dataset outside of this project first because the original dataset of almost 1 million rows was far too large to be able to run efficiently in RStudio; as such, we filtered for where the movies had more than 100 votes, meaning more than 100 people submitted ratings for the movie. After filtering, there are now 18086 observations, and we were able to import this filtered dataset into Rstudio (The file name was "final_vote_filtered_movie_data.csv").
 
-We are going to transform the variables spoken_languages and genres. For spoken_languages, we want to make a categorical variable based on whether more than one language is spoken in the movie or not (True = more than one language, False = just one language). For genres, we want to take a similar approach to see whether the movie is tagged for more than one genre (True = more than one genre, False = just one genre). Additionally, we want to transform the month, date, year format of the release date to just be the year. Lastly, before we begin EDA and further analysis, we are going to remove all 0s in the revenue column because we are not able to accurately impute the values; we have evidence to suggest that the original author of the dataset just put 0s instead of NAs. 
+We are going to transform the variables spoken_languages and genres. For spoken_languages, we want to make a categorical variable based on whether more than one language is spoken in the movie or not (True = more than one language, False = just one language). For genres, we want to take a similar approach to see whether the movie is tagged for more than one genre (True = more than one genre, False = just one genre). Additionally, we want to transform the month, date, year format of the release date to just be the year. Lastly, before we begin EDA and further analysis, we are going to remove all 0s in the revenue and budget columns because we are not able to accurately impute the values; we have evidence to suggest that the original author of the dataset just put 0s instead of NAs. 
 
 ```{r}
 #Question to ask: when copying from proposal to written report qmd, do we need everything from the proposal or only the intro section? 
-
-
 
 #New column where TRUE for multiple languages, FALSE for 1 language
 movies <- movies |>
@@ -61,9 +59,9 @@ movies <- movies |>
 movies <- movies |>
   mutate(year = as.numeric(format(as.Date(release_date), "%Y")))
 
-#Filter down df for movies where revenue is not 0
+#Filter down df for movies where revenue and budget is not 0
 movies <- movies |>
-  filter(revenue > 0)
+  filter(revenue > 0 & budget > 0)
 
 #Drop NAs for multi-languages
 na_rows <- movies |> 
@@ -398,7 +396,6 @@ movies |>
     y = "log(Revenue)"
   ) +
   scale_x_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
-  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
 ```
 
 ## Chrisie Section
