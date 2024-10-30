@@ -145,6 +145,209 @@ The data dictionary can be found here: [data/README.md](data/README.md)
 
 ## Univariate EDA
 
+```{r}
+#Histogram
+movies |>
+  ggplot(aes(x = log_revenue)) +
+  geom_histogram(bins = 20) + 
+  labs(
+    title = "Histogram of Logged revenue",
+    x = "Logged Revenue (in billions of dollars)", 
+    y = "Count"
+  ) +
+  scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
+
+#Boxplot
+movies |>
+  ggplot(aes(x = log_revenue)) +
+  geom_boxplot() + 
+  labs(
+    title = "Boxplot of Logged revenue Revenue",
+    x = "Logged Revenue (in billions of dollars)"
+  ) +
+  scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
+
+#Summary statistics 
+movies |>
+  summarise(min = min(log_revenue), 
+            q1 = quantile(log_revenue, 0.25), 
+            median = median(log_revenue), 
+            q3 = quantile(log_revenue, 0.75), 
+            max = max(log_revenue), 
+            mean = mean(log_revenue), 
+            sd = sd(log_revenue),
+            IQR = q3-q1)|>
+  kable(digits = 3)
+```
+
+Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and has a median of 16.74 logged billions of dollars and an IQR of 2.91.
+
+```{r}
+
+# Histogram
+movies |>
+  ggplot(aes(x = vote_average)) +
+  geom_histogram(bins = 20) + 
+  labs(
+    title = "Histogram of Average Votes",
+    x = "Average Vote (in points)", 
+    y = "Count"
+  ) +
+  scale_x_continuous(labels = label_number())
+
+# Boxplot
+movies |>
+  ggplot(aes(x = vote_average)) +
+  geom_boxplot() + 
+  labs(
+    title = "Boxplot of Average Votes",
+    x = "Average Vote (in points)"
+  ) +
+  scale_x_continuous(labels = label_number())
+
+# Summary statistics 
+movies |>
+  summarise(
+    min = min(vote_average), 
+    q1 = quantile(vote_average, 0.25), 
+    median = median(vote_average), 
+    q3 = quantile(vote_average, 0.75), 
+    max = max(vote_average), 
+    mean = mean(vote_average), 
+    sd = sd(vote_average),
+    IQR = q3 - q1
+  ) |>
+  kable(digits = 3)
+
+```
+
+The predictor variable vote_average, measuring the average rating given to a movie by users, is roughly normally distirbuted and is unimodal. It has a few outliers on the right side, and has many on the left. The median is 6.56 points (out of ten), and the IQR is 1.09.
+
+```{r}
+# Histogram
+movies |>
+  ggplot(aes(x = runtime)) +
+  geom_histogram(bins = 40) + 
+  labs(
+    title = "Histogram of Movie Runtimes",
+    x = "Runtime (in minutes)", 
+    y = "Count"
+  ) + scale_x_continuous(limits = c(0, 250), labels = label_number())
+
+# Boxplot
+movies |>
+  ggplot(aes(x = runtime)) +
+  geom_boxplot() + 
+  labs(
+    title = "Boxplot of Movie Runtimes",
+    x = "Runtime (in minutes)"
+  ) +
+  scale_x_continuous(labels = label_number())
+
+# Summary statistics 
+movies |>
+  summarise(
+    min = min(runtime), 
+    q1 = quantile(runtime, 0.25), 
+    median = median(runtime), 
+    q3 = quantile(runtime, 0.75), 
+    max = max(runtime), 
+    mean = mean(runtime), 
+    sd = sd(runtime),
+    IQR = q3 - q1
+  ) |>
+  kable(digits = 3)
+
+```
+
+The predictor variable movie_runtime, is roughly normally distributed and unimodal, however it has a right skew. There are numerous outliers on both the left and right, including one very large outlier of 566 minutes. The median is 105 minutes, and the IQR is 23.
+
+```{r}
+# Histogram
+movies |>
+  ggplot(aes(x = year)) +
+  geom_histogram(bins = 20) + 
+  labs(
+    title = "Histogram of Movie Release Years",
+    x = "Release Year (in years)", 
+    y = "Count"
+  ) +
+  scale_x_continuous(labels = label_number())
+
+# Boxplot
+movies |>
+  ggplot(aes(x = year)) +
+  geom_boxplot() + 
+  labs(
+    title = "Boxplot of Movie Release Years",
+    x = "Release Year (in years)"
+  ) +
+  scale_x_continuous(labels = label_number())
+
+# Summary statistics 
+movies |>
+  summarise(
+    min = min(year), 
+    q1 = quantile(year, 0.25), 
+    median = median(year), 
+    q3 = quantile(year, 0.75), 
+    max = max(year), 
+    mean = mean(year), 
+    sd = sd(year),
+    IQR = q3 - q1
+  ) |>
+  kable(digits = 3)
+
+```
+
+The predictor variable year has a strong left skew, and is unimodal. There are a significant number of outliers on the left. The median release year is 2007, and the IQR is 20.
+
+```{r}
+# Frequency Table
+movies |>
+  count(multi_language) |>
+  mutate(proportion = n / sum(n)) |>
+  kable(digits = 3)
+
+# Bar Plot
+movies |>
+  ggplot(aes(x = factor(multi_language))) +  # Treat as categorical
+  geom_bar() +
+  labs(
+    title = "Bar Plot of Multi-Language Movies",
+    x = "Multi-Language (0 = No, 1 = Yes)", 
+    y = "Count"
+  ) +
+  scale_x_discrete(labels = c("0" = "No", "1" = "Yes"))  # Adjust labels to be descriptive
+
+
+
+```
+
+About 70 percent of the data is in just English, and 30 percent features other languages.
+
+```{r}
+# Frequency Table
+movies |>
+  count(multi_genre) |>
+  mutate(proportion = n / sum(n)) |>
+  kable(digits = 3)
+
+# Bar Plot
+movies |>
+  ggplot(aes(x = factor(multi_genre))) +  # Treat as categorical
+  geom_bar() +
+  labs(
+    title = "Bar Plot of Multi-Genre Movies",
+    x = "Multi-Genre (0 = No, 1 = Yes)", 
+    y = "Count"
+  ) +
+  scale_x_discrete(labels = c("0" = "No", "1" = "Yes"))  # Adjust labels to be descriptive
+
+```
+
+About 84 percent of the movies are classified as more than one genre.
+
 ## Bivariate EDA
 
 ```{r}
