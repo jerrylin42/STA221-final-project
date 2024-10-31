@@ -185,7 +185,7 @@ movies |>
   kable(digits = 3)
 ```
 
-Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and has a median of 16.74 logged billions of dollars and an IQR of 2.91.
+Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and has a median of 17.22 logged billions of dollars and an IQR of 2.43.
 
 ```{r}
 #| fig-width: 5
@@ -230,7 +230,7 @@ movies |>
 
 ```
 
-The predictor variable vote_average, measuring the average rating given to a movie by users, is roughly normally distirbuted and is unimodal. It has a few outliers on the right side, and has many on the left. The median is 6.56 points (out of ten), and the IQR is 1.09.
+The predictor variable vote_average, measuring the average rating given to a movie by users, is roughly normally distirbuted and is unimodal. It has a few outliers on the right side, and has many on the left. The median is 6.57 points (out of ten), and the IQR is 1.08.
 
 ```{r}
 #| fig-width: 5
@@ -272,7 +272,7 @@ movies |>
 
 ```
 
-The predictor variable movie_runtime, is roughly normally distributed and unimodal, however it has a right skew. There are numerous outliers on both the left and right, including one very large outlier of 566 minutes. The median is 105 minutes, and the IQR is 23.
+The predictor variable movie_runtime, is roughly normally distributed and unimodal, however it has a right skew. There are numerous outliers on both the left and right, including one very large outlier of 333 minutes. The median is 106 minutes, and the IQR is 25.
 
 ```{r}
 #| fig-width: 5
@@ -315,7 +315,7 @@ movies |>
 
 ```
 
-The predictor variable year has a strong left skew, and is unimodal. There are a significant number of outliers on the left. The median release year is 2007, and the IQR is 20.
+The predictor variable year has a strong left skew, and is unimodal. There are a significant number of outliers on the left. The median release year is 2006, and the IQR is 19.
 
 ```{r}
 #| fig-width: 5
@@ -359,6 +359,8 @@ movies |>
 
 ```
 
+The budget is unimodal with a strong right skew. There are numerous outliers on the right side. The median budget is 17 million dollars, with an IQR of 34 million.
+
 ```{r}
 # Frequency Table
 movies |>
@@ -372,7 +374,7 @@ movies |>
 
 ```
 
-About 70 percent of the data is in just English, and 30 percent features other languages.
+About 69 percent of the data is in just one language, and 31 percent features other languages.
 
 ```{r}
 # Frequency Table
@@ -385,7 +387,7 @@ movies |>
 
 ```
 
-About 84 percent of the movies are classified as more than one genre.
+About 86 percent of the movies are classified as more than one genre.
 
 ## Bivariate EDA
 
