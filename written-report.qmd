@@ -75,28 +75,31 @@ movies <- movies |>
 Below is basic initial EDA of our untransformed response variable, revenue.
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
 
 #Histogram
-movies |>
+plot1 = movies |>
   ggplot(aes(x = revenue)) +
   geom_histogram(bins = 20) + 
   labs(
-    title = "Histogram of Revenue",
+    title = "Revenue Hist",
     x = "Revenue (in billions of dollars)", 
     y = "Count"
   ) +
   scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
 
 #Boxplot
-movies |>
+plot2 = movies |>
   ggplot(aes(x = revenue)) +
   geom_boxplot() + 
   labs(
-    title = "Boxplot of Revenue",
+    title = "Revenue Box",
     x = "Revenue (in billions of dollars)"
   ) +
   scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
 
+plot1+plot2
 #Summary statistics 
 movies |>
   summarise(min = min(revenue), 
@@ -145,8 +148,10 @@ The data dictionary can be found here: [data/README.md](data/README.md)
 ## Univariate EDA
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
 #Histogram
-movies |>
+plot1= movies |>
   ggplot(aes(x = log_revenue)) +
   geom_histogram(bins = 20) + 
   labs(
@@ -157,7 +162,7 @@ movies |>
   scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
 
 #Boxplot
-movies |>
+plot2 = movies |>
   ggplot(aes(x = log_revenue)) +
   geom_boxplot() + 
   labs(
@@ -166,6 +171,7 @@ movies |>
   ) +
   scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
 
+plot1+plot2
 #Summary statistics 
 movies |>
   summarise(min = min(log_revenue), 
@@ -182,9 +188,11 @@ movies |>
 Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and has a median of 16.74 logged billions of dollars and an IQR of 2.91.
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
 
 # Histogram
-movies |>
+plot1 = movies |>
   ggplot(aes(x = vote_average)) +
   geom_histogram(bins = 20) + 
   labs(
@@ -195,7 +203,8 @@ movies |>
   scale_x_continuous(labels = label_number())
 
 # Boxplot
-movies |>
+
+plot2 = movies |>
   ggplot(aes(x = vote_average)) +
   geom_boxplot() + 
   labs(
@@ -204,6 +213,7 @@ movies |>
   ) +
   scale_x_continuous(labels = label_number())
 
+plot1+plot2
 # Summary statistics 
 movies |>
   summarise(
@@ -223,8 +233,10 @@ movies |>
 The predictor variable vote_average, measuring the average rating given to a movie by users, is roughly normally distirbuted and is unimodal. It has a few outliers on the right side, and has many on the left. The median is 6.56 points (out of ten), and the IQR is 1.09.
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
 # Histogram
-movies |>
+plot1 = movies |>
   ggplot(aes(x = runtime)) +
   geom_histogram(bins = 40) + 
   labs(
@@ -234,7 +246,7 @@ movies |>
   ) + scale_x_continuous(limits = c(0, 250), labels = label_number())
 
 # Boxplot
-movies |>
+plot2 = movies |>
   ggplot(aes(x = runtime)) +
   geom_boxplot() + 
   labs(
@@ -243,6 +255,7 @@ movies |>
   ) +
   scale_x_continuous(labels = label_number())
 
+plot1+plot2
 # Summary statistics 
 movies |>
   summarise(
@@ -262,8 +275,10 @@ movies |>
 The predictor variable movie_runtime, is roughly normally distributed and unimodal, however it has a right skew. There are numerous outliers on both the left and right, including one very large outlier of 566 minutes. The median is 105 minutes, and the IQR is 23.
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
 # Histogram
-movies |>
+plot1 = movies |>
   ggplot(aes(x = year)) +
   geom_histogram(bins = 20) + 
   labs(
@@ -274,7 +289,7 @@ movies |>
   scale_x_continuous(labels = label_number())
 
 # Boxplot
-movies |>
+plot2 = movies |>
   ggplot(aes(x = year)) +
   geom_boxplot() + 
   labs(
@@ -283,6 +298,7 @@ movies |>
   ) +
   scale_x_continuous(labels = label_number())
 
+plot1+plot2
 # Summary statistics 
 movies |>
   summarise(
@@ -302,22 +318,55 @@ movies |>
 The predictor variable year has a strong left skew, and is unimodal. There are a significant number of outliers on the left. The median release year is 2007, and the IQR is 20.
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
+# Histogram
+plot1 = movies |>
+  ggplot(aes(x = budget / 1e6)) +
+  geom_histogram(bins = 40) + 
+  labs(
+    title = "Histogram of Movie Budgets",
+    x = "Budget (in millions of dollars)", 
+    y = "Count"
+  ) + scale_x_continuous(labels = scales::dollar_format(scale = 1, suffix = "M"))
+
+# Boxplot
+plot2 = movies |>
+  ggplot(aes(x = budget / 1e6)) +
+  geom_boxplot() + 
+  labs(
+    title = "Boxplot of Movie Budgets",
+    x = "Budget (in millions of dollars)"
+  ) +
+  scale_x_continuous(labels = scales::dollar_format(scale = 1, suffix = "M"))
+
+plot1 + plot2
+
+# Summary statistics 
+movies |>
+  summarise(
+    min = min(budget / 1e6, na.rm = TRUE), 
+    q1 = quantile(budget / 1e6, 0.25, na.rm = TRUE), 
+    median = median(budget / 1e6, na.rm = TRUE), 
+    q3 = quantile(budget / 1e6, 0.75, na.rm = TRUE), 
+    max = max(budget / 1e6, na.rm = TRUE), 
+    mean = mean(budget / 1e6, na.rm = TRUE), 
+    sd = sd(budget / 1e6, na.rm = TRUE),
+    IQR = q3 - q1
+  ) |>
+  kable(digits = 3)
+
+
+```
+
+```{r}
 # Frequency Table
 movies |>
   count(multi_language) |>
   mutate(proportion = n / sum(n)) |>
   kable(digits = 3)
 
-# Bar Plot
-movies |>
-  ggplot(aes(x = factor(multi_language))) +  # Treat as categorical
-  geom_bar() +
-  labs(
-    title = "Bar Plot of Multi-Language Movies",
-    x = "Multi-Language (0 = No, 1 = Yes)", 
-    y = "Count"
-  ) +
-  scale_x_discrete(labels = c("0" = "No", "1" = "Yes"))  # Adjust labels to be descriptive
+
 
 
 
@@ -332,16 +381,7 @@ movies |>
   mutate(proportion = n / sum(n)) |>
   kable(digits = 3)
 
-# Bar Plot
-movies |>
-  ggplot(aes(x = factor(multi_genre))) +  # Treat as categorical
-  geom_bar() +
-  labs(
-    title = "Bar Plot of Multi-Genre Movies",
-    x = "Multi-Genre (0 = No, 1 = Yes)", 
-    y = "Count"
-  ) +
-  scale_x_discrete(labels = c("0" = "No", "1" = "Yes"))  # Adjust labels to be descriptive
+
 
 ```
 
