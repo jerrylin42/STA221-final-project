@@ -24,7 +24,7 @@ movies <- read_csv("data/final_vote_filtered_movie_data.csv")
 ```
 
 ## Introduction
-
+<span style="font-size:7px">
 Movies have been at the heart of pop culture for nearly a century. And while movies have changed a lot over the years, varying in length, theme, due to technological advances, and more, one thing has never changed–movies have remained as a dominant part of the entertainment industry. Yet, ever since the COVID-19 pandemic, the North American box office for movies has not recovered–it seems that people just aren’t going to movies as much as they used to. As mentioned in [@boxofficemojo2024], domestic box office gross revenue in 2019 reached nearly \$11.4 billion, while the yearly total from 2023 topped off at \$8.9 billion after a very slow two years in 2020 and 2021. With moviegoers back on the rise, the film industry and box offices are hopeful to end the decade on a high note and return back to their original state. As such, we are interested in investigating the trends in gross revenue for top movies and how various elements impact the amount of money that a movie makes.
 
 Research Question: What are the key factors and metrics that most significantly influence a movie's gross revenue?
@@ -75,28 +75,31 @@ movies <- movies |>
 Below is basic initial EDA of our untransformed response variable, revenue.
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
 
 #Histogram
-movies |>
+plot1 = movies |>
   ggplot(aes(x = revenue)) +
   geom_histogram(bins = 20) + 
   labs(
-    title = "Histogram of Revenue",
+    title = "Revenue Hist",
     x = "Revenue (in billions of dollars)", 
     y = "Count"
   ) +
   scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
 
 #Boxplot
-movies |>
+plot2 = movies |>
   ggplot(aes(x = revenue)) +
   geom_boxplot() + 
   labs(
-    title = "Boxplot of Revenue",
+    title = "Revenue Box",
     x = "Revenue (in billions of dollars)"
   ) +
   scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
 
+plot1+plot2
 #Summary statistics 
 movies |>
   summarise(min = min(revenue), 
@@ -145,8 +148,10 @@ The data dictionary can be found here: [data/README.md](data/README.md)
 ## Univariate EDA
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
 #Histogram
-movies |>
+plot1= movies |>
   ggplot(aes(x = log_revenue)) +
   geom_histogram(bins = 20) + 
   labs(
@@ -157,7 +162,7 @@ movies |>
   scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
 
 #Boxplot
-movies |>
+plot2 = movies |>
   ggplot(aes(x = log_revenue)) +
   geom_boxplot() + 
   labs(
@@ -166,6 +171,7 @@ movies |>
   ) +
   scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
 
+plot1+plot2
 #Summary statistics 
 movies |>
   summarise(min = min(log_revenue), 
@@ -179,12 +185,14 @@ movies |>
   kable(digits = 3)
 ```
 
-Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and has a median of 16.74 logged billions of dollars and an IQR of 2.91.
+Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and has a median of 17.22 logged billions of dollars and an IQR of 2.43.
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
 
 # Histogram
-movies |>
+plot1 = movies |>
   ggplot(aes(x = vote_average)) +
   geom_histogram(bins = 20) + 
   labs(
@@ -195,7 +203,8 @@ movies |>
   scale_x_continuous(labels = label_number())
 
 # Boxplot
-movies |>
+
+plot2 = movies |>
   ggplot(aes(x = vote_average)) +
   geom_boxplot() + 
   labs(
@@ -204,6 +213,7 @@ movies |>
   ) +
   scale_x_continuous(labels = label_number())
 
+plot1+plot2
 # Summary statistics 
 movies |>
   summarise(
@@ -220,11 +230,13 @@ movies |>
 
 ```
 
-The predictor variable vote_average, measuring the average rating given to a movie by users, is roughly normally distirbuted and is unimodal. It has a few outliers on the right side, and has many on the left. The median is 6.56 points (out of ten), and the IQR is 1.09.
+The predictor variable vote_average, measuring the average rating given to a movie by users, is roughly normally distirbuted and is unimodal. It has a few outliers on the right side, and has many on the left. The median is 6.57 points (out of ten), and the IQR is 1.08.
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
 # Histogram
-movies |>
+plot1 = movies |>
   ggplot(aes(x = runtime)) +
   geom_histogram(bins = 40) + 
   labs(
@@ -234,7 +246,7 @@ movies |>
   ) + scale_x_continuous(limits = c(0, 250), labels = label_number())
 
 # Boxplot
-movies |>
+plot2 = movies |>
   ggplot(aes(x = runtime)) +
   geom_boxplot() + 
   labs(
@@ -243,6 +255,7 @@ movies |>
   ) +
   scale_x_continuous(labels = label_number())
 
+plot1+plot2
 # Summary statistics 
 movies |>
   summarise(
@@ -259,11 +272,13 @@ movies |>
 
 ```
 
-The predictor variable movie_runtime, is roughly normally distributed and unimodal, however it has a right skew. There are numerous outliers on both the left and right, including one very large outlier of 566 minutes. The median is 105 minutes, and the IQR is 23.
+The predictor variable movie_runtime, is roughly normally distributed and unimodal, however it has a right skew. There are numerous outliers on both the left and right, including one very large outlier of 333 minutes. The median is 106 minutes, and the IQR is 25.
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
 # Histogram
-movies |>
+plot1 = movies |>
   ggplot(aes(x = year)) +
   geom_histogram(bins = 20) + 
   labs(
@@ -274,7 +289,7 @@ movies |>
   scale_x_continuous(labels = label_number())
 
 # Boxplot
-movies |>
+plot2 = movies |>
   ggplot(aes(x = year)) +
   geom_boxplot() + 
   labs(
@@ -283,6 +298,7 @@ movies |>
   ) +
   scale_x_continuous(labels = label_number())
 
+plot1+plot2
 # Summary statistics 
 movies |>
   summarise(
@@ -299,7 +315,51 @@ movies |>
 
 ```
 
-The predictor variable year has a strong left skew, and is unimodal. There are a significant number of outliers on the left. The median release year is 2007, and the IQR is 20.
+The predictor variable year has a strong left skew, and is unimodal. There are a significant number of outliers on the left. The median release year is 2006, and the IQR is 19.
+
+```{r}
+#| fig-width: 5
+#| fig-height: 2.2
+# Histogram
+plot1 = movies |>
+  ggplot(aes(x = budget / 1e6)) +
+  geom_histogram(bins = 40) + 
+  labs(
+    title = "Histogram of Movie Budgets",
+    x = "Budget (in millions of dollars)", 
+    y = "Count"
+  ) + scale_x_continuous(labels = scales::dollar_format(scale = 1, suffix = "M"))
+
+# Boxplot
+plot2 = movies |>
+  ggplot(aes(x = budget / 1e6)) +
+  geom_boxplot() + 
+  labs(
+    title = "Boxplot of Movie Budgets",
+    x = "Budget (in millions of dollars)"
+  ) +
+  scale_x_continuous(labels = scales::dollar_format(scale = 1, suffix = "M"))
+
+plot1 + plot2
+
+# Summary statistics 
+movies |>
+  summarise(
+    min = min(budget / 1e6, na.rm = TRUE), 
+    q1 = quantile(budget / 1e6, 0.25, na.rm = TRUE), 
+    median = median(budget / 1e6, na.rm = TRUE), 
+    q3 = quantile(budget / 1e6, 0.75, na.rm = TRUE), 
+    max = max(budget / 1e6, na.rm = TRUE), 
+    mean = mean(budget / 1e6, na.rm = TRUE), 
+    sd = sd(budget / 1e6, na.rm = TRUE),
+    IQR = q3 - q1
+  ) |>
+  kable(digits = 3)
+
+
+```
+
+The budget is unimodal with a strong right skew. There are numerous outliers on the right side. The median budget is 17 million dollars, with an IQR of 34 million.
 
 ```{r}
 # Frequency Table
@@ -308,22 +368,13 @@ movies |>
   mutate(proportion = n / sum(n)) |>
   kable(digits = 3)
 
-# Bar Plot
-movies |>
-  ggplot(aes(x = factor(multi_language))) +  # Treat as categorical
-  geom_bar() +
-  labs(
-    title = "Bar Plot of Multi-Language Movies",
-    x = "Multi-Language (0 = No, 1 = Yes)", 
-    y = "Count"
-  ) +
-  scale_x_discrete(labels = c("0" = "No", "1" = "Yes"))  # Adjust labels to be descriptive
+
 
 
 
 ```
 
-About 70 percent of the data is in just English, and 30 percent features other languages.
+About 69 percent of the data is in just one language, and 31 percent features other languages.
 
 ```{r}
 # Frequency Table
@@ -332,20 +383,11 @@ movies |>
   mutate(proportion = n / sum(n)) |>
   kable(digits = 3)
 
-# Bar Plot
-movies |>
-  ggplot(aes(x = factor(multi_genre))) +  # Treat as categorical
-  geom_bar() +
-  labs(
-    title = "Bar Plot of Multi-Genre Movies",
-    x = "Multi-Genre (0 = No, 1 = Yes)", 
-    y = "Count"
-  ) +
-  scale_x_discrete(labels = c("0" = "No", "1" = "Yes"))  # Adjust labels to be descriptive
+
 
 ```
 
-About 84 percent of the movies are classified as more than one genre.
+About 86 percent of the movies are classified as more than one genre.
 
 ## Bivariate EDA
 
@@ -469,6 +511,44 @@ According to the graph comparing year and log(revenue), there is a positive, wea
 
 ## Interaction
 
+```{r}
+interaction <- lm(log_revenue ~ (vote_average + multi_language + budget + runtime + year + multi_genre)^2, data = movies)
+
+kable(tidy(interaction), digits = 3)
+```
+
+First interaction we want to investigate is the genre and vote average. It is possible that the effect of vote_average on log(revenue) differs based on if it is a multi-genre movie or if the movie is only of a single genre.
+
+```{r}
+movies |>
+  ggplot(aes(x = vote_average, y = log_revenue, color = multi_genre)) +
+  geom_point(alpha = 0.5) + 
+  geom_smooth(method = "lm", aes(group = multi_genre), se = FALSE) +
+  labs(
+    title = "Vote Average vs. log(Revenue) by multi_genre",
+    x = "Vote Average",
+    y = "log(Revenue)"
+  ) 
+```
+
+The slope of each line differs by a bit, so it is possible there is evidence of interaction, but further analysis is needed.
+
+Second interaction we want to investigate is the genre and runtime. It is possible that the effect of movie runtime on log(revenue) differs based on if it is a multi-genre movie or if the movie is only of a single genre.
+
+```{r}
+movies |>
+  ggplot(aes(x = runtime, y = log_revenue, color = multi_genre)) +
+  geom_point(alpha = 0.5) + 
+  geom_smooth(method = "lm", aes(group = multi_genre), se = FALSE) +
+  labs(
+    title = "Runtime vs. log(Revenue) by multi_genre",
+    x = "Runtime",
+    y = "log(Revenue)"
+  ) 
+```
+
+The slope of each seems to differ slightly, but it seems that the effect of runtime on log(Revenue) is marginally stronger for multi-genre movies. We intend to do further analysis later in this project to investigate these interaction effects as well as other interactions of interest.
+</span>
 ::: callout-important
 Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
 :::
