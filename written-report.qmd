@@ -422,43 +422,52 @@ Because of the extreme curvature present in the graph of Budget vs. log(Revenue)
 
 ```{r}
 # vote
-movies |>
+voteplot <- movies |>
   ggplot(aes(x = vote_average, y = log_revenue)) +
   geom_point() + 
   labs(
     title = "Vote Average vs. log(Revenue)",
     x = "Vote Average",
-    y = "log(Revenue) (in billions of dollars)"
+    y = "log(Revenue)"
   ) +
   scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
 ```
 
 ```{r}
 # runtime
-movies |>
+runtimeplot <- movies |>
   ggplot(aes(x = runtime, y = log_revenue)) +
   geom_point() + 
   labs(
     title = "Runtime vs. log(Revenue)",
     x = "Runtime (minutes)",
-    y = "log(Revenue) (in billions of dollars)"
+    y = "log(Revenue)"
   ) +
   scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
 ```
 
 ```{r}
-# release date
-movies |>
+voteplot + runtimeplot
+```
+According to the graph comparing vote average and log revenue, there is a weak positive correlation. Movies with higher ratings tend to have slightly higher revenues. Most of the data points are also clustered between vote averages of 5 and 8, and the log revenues are between the $10 billion and $20 billion range for these points.
+
+According to the graph comparing runtime and log revenue, there is no clear positive or negative correlation. There are many data points clustered between 100 and 200 minutes, and the log revenues are between the $10 billion and $20 billion range for these points.
+
+```{r}
+# year
+yearplot <- movies |>
   ggplot(aes(x = year, y = log_revenue)) +
   geom_point() + 
   labs(
     title = "Release Date vs. log(Revenue)",
-    x = "Release Date (year)",
-    y = "log(Revenue) (in billions of dollars)"
+    x = "Year",
+    y = "log(Revenue)"
   ) +
   scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
-```
 
+yearplot
+```
+According to the graph comparing year and log revenue, there is a positive, weak correlation. Movies with more recent years tend to have a slightly higher log revenue. There are many data points clustered between 1975 and 2025 for the year and the $10 billion and $20 billion for the log revenue.
 ## Interaction
 
 ::: callout-important
