@@ -355,15 +355,14 @@ movies |>
   ggpairs()
 ```
 
-## Carlie Section
-
 ```{r}
 # spoken languages
 
 languages_plot <- movies |>
   ggplot(aes(x = multi_language, y = log_revenue)) +
   geom_boxplot() + 
-  labs(x = "Number of Languages Spoken in Movie", 
+  labs(x = "Number of Languages
+Spoken in Movie", 
        y = "log(Revenue)", 
        title = "Spoken Languages in 
 Movie vs. log(Revenue)"
@@ -416,9 +415,7 @@ Based on the boxplots for the number of spoken languages in a movie, it seems th
 
 Based on the boxplots for the number of genres a movie is tagged for, it also appears that whether the movie is grouped into one genre or multiple genres does not have much of an impact on the logged revenue. Again, this is evident based on the overlapping of the two boxplots.
 
-Because of the extreme curvature present in the graph of Budget vs. log(Revenue), it makes sense to also do a log transformation on Budget in order to get the graph log(Budget) vs. log(Revenue) which is seen on the right. The graph of log(Budget) vs. log(Revenue) has far less curvature and appears to be take more of a linear shape than Budget vs. log(Revenue).
-
-## Chrisie Section
+Because of the extreme curvature present in the graph of budget vs. log(revenue), it makes sense to also do a log transformation on Budget in order to get the graph log(budget) vs. log(revenue) which is seen on the bottom right. The graph of log(budget) vs. log(revenue) has far less curvature and appears to take more of a linear shape than budget vs. log(revenue).
 
 ```{r}
 # vote
@@ -426,11 +423,11 @@ voteplot <- movies |>
   ggplot(aes(x = vote_average, y = log_revenue)) +
   geom_point() + 
   labs(
-    title = "Vote Average vs. log(Revenue)",
+    title = "Vote Average
+vs. log(Revenue)",
     x = "Vote Average",
     y = "log(Revenue)"
-  ) +
-  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+  )
 ```
 
 ```{r}
@@ -442,16 +439,16 @@ runtimeplot <- movies |>
     title = "Runtime vs. log(Revenue)",
     x = "Runtime (minutes)",
     y = "log(Revenue)"
-  ) +
-  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+  ) 
 ```
 
 ```{r}
 voteplot + runtimeplot
 ```
-According to the graph comparing vote average and log revenue, there is a weak positive correlation. Movies with higher ratings tend to have slightly higher revenues. Most of the data points are also clustered between vote averages of 5 and 8, and the log revenues are between the $10 billion and $20 billion range for these points.
 
-According to the graph comparing runtime and log revenue, there is no clear positive or negative correlation. There are many data points clustered between 100 and 200 minutes, and the log revenues are between the $10 billion and $20 billion range for these points.
+According to the graph comparing vote average and logged revenue, there is a weak positive correlation. Movies with higher ratings tend to have slightly higher revenues. Most of the data points are also clustered between vote averages of 5 and 8.
+
+According to the graph comparing runtime and log(revenue), there is no clear positive or negative correlation. There are many data points clustered between 100 and 200 minutes, which makes sense considering the average length of most movies.
 
 ```{r}
 # year
@@ -467,7 +464,9 @@ yearplot <- movies |>
 
 yearplot
 ```
-According to the graph comparing year and log revenue, there is a positive, weak correlation. Movies with more recent years tend to have a slightly higher log revenue. There are many data points clustered between 1975 and 2025 for the year and the $10 billion and $20 billion for the log revenue.
+
+According to the graph comparing year and log(revenue), there is a positive, weak correlation. Movies with more recent years tend to have a slightly higher logged revenue, which makes sense in the context of inflation. There are many data points clustered between 1975 and 2023.
+
 ## Interaction
 
 ::: callout-important
