@@ -441,6 +441,44 @@ movies |>
 
 ## Interaction
 
+```{r}
+interaction <- lm(log_revenue ~ (vote_average + multi_language + budget + runtime + year + multi_genre)^2, data = movies)
+
+kable(tidy(interaction), digits = 3)
+```
+
+First interaction we want to investigate is the genre and vote average. It is possible that the effect of vote_average on log(revenue) differs based on if it is a multi-genre movie or if the movie is only of a single genre.
+
+```{r}
+movies |>
+  ggplot(aes(x = vote_average, y = log_revenue, color = multi_genre)) +
+  geom_point(alpha = 0.5) + 
+  geom_smooth(method = "lm", aes(group = multi_genre), se = FALSE) +
+  labs(
+    title = "Vote Average vs. log(Revenue) by multi_genre",
+    x = "Vote Average",
+    y = "log(Revenue)"
+  ) 
+```
+
+The slope of each line differs by a bit, so it is possible there is evidence of interaction, but further analysis is needed.
+
+Second interaction we want to investigate is the genre and runtime. It is possible that the effect of movie runtime on log(revenue) differs based on if it is a multi-genre movie or if the movie is only of a single genre.
+
+```{r}
+movies |>
+  ggplot(aes(x = runtime, y = log_revenue, color = multi_genre)) +
+  geom_point(alpha = 0.5) + 
+  geom_smooth(method = "lm", aes(group = multi_genre), se = FALSE) +
+  labs(
+    title = "Runtime vs. log(Revenue) by multi_genre",
+    x = "Runtime",
+    y = "log(Revenue)"
+  ) 
+```
+
+The slope of each seems to differ slightly, but it seems that the effect of runtime on log(Revenue) is marginally stronger for multi-genre movies. We intend to do further analysis later in this project to investigate these interaction effects as well as other interactions of interest.
+
 ::: callout-important
 Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
 :::
