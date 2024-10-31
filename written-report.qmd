@@ -129,7 +129,6 @@ release_date: This indicates the day, month, and year that the movie was release
 
 genres: This is a genre or list of genres associated with the movie. We expect movies tagged with more than one genre to appeal to a wider audience, thus driving up the number of people who go to see the movie and increasing gross revenue. We created a new variable from this variable called "multi_genre" that categorizes movies with multiple genres as "TRUE" and movies with one genre as "FALSE."
 
-
 Method of approach:
 
 We plan to use multiple linear regression to predict gross revenue, but we will log transform gross revenue because we can see from our EDA that revenue is extremely skewed in its original form.
@@ -366,8 +365,8 @@ languages_plot <- movies |>
   geom_boxplot() + 
   labs(x = "Number of Languages Spoken in Movie", 
        y = "log(Revenue)", 
-       title = "Spoken Langauges in Movie 
-vs. log(Revenue)"
+       title = "Spoken Languages in 
+Movie vs. log(Revenue)"
        ) + 
   scale_x_discrete(labels = c("FALSE" = "One", "TRUE" = "More than One"))
 
@@ -378,17 +377,13 @@ genre_plot <- movies |>
   geom_boxplot() + 
   labs(x = "Number of Genres in Movie", 
        y = "log(Revenue)", 
-       title = "Genres in Movie vs. log(Revenue)"
+       title = "Genres in Movie
+vs. log(Revenue)"
        ) + 
   scale_x_discrete(labels = c("FALSE" = "One", "TRUE" = "More than One"))
 
-languages_plot + genre_plot
-
+languages_plot + genre_plot 
 ```
-
-Based on the boxplots for the number of spoken languages in a movie, it seems that whether one language was spoken or multiple were does not have much of an impact on the logged revenue. This is evident based on the overlapping of the two boxplots.
-
-Based on the boxplots for the number of genres a movie is tagged for, it also appears that whether the movie is grouped into one genre or multiple genres does not have much of an impact on the logged revenue. Again, this is evident based on the overlapping of the two boxplots.
 
 ```{r}
 # budget
@@ -408,13 +403,18 @@ log_budget_plot <- movies |>
   ggplot(aes(x = log(budget), y = log_revenue)) +
   geom_point() + 
   labs(
-    title = "log(Budget) vs. log(Revenue)",
+    title = "log(Budget) vs.
+log(Revenue)",
     x = "log(Budget)",
     y = "log(Revenue)"
   ) 
 
 budget_plot + log_budget_plot
 ```
+
+Based on the boxplots for the number of spoken languages in a movie, it seems that whether one language was spoken or multiple were does not have much of an impact on the logged revenue. This is evident based on the overlapping of the two boxplots.
+
+Based on the boxplots for the number of genres a movie is tagged for, it also appears that whether the movie is grouped into one genre or multiple genres does not have much of an impact on the logged revenue. Again, this is evident based on the overlapping of the two boxplots.
 
 Because of the extreme curvature present in the graph of Budget vs. log(Revenue), it makes sense to also do a log transformation on Budget in order to get the graph log(Budget) vs. log(Revenue) which is seen on the right. The graph of log(Budget) vs. log(Revenue) has far less curvature and appears to be take more of a linear shape than Budget vs. log(Revenue).
 
