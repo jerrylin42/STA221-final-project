@@ -18,6 +18,7 @@ library(knitr)
 library(readr)
 library(GGally)
 library(dplyr)
+library(patchwork)
 
 movies <- read_csv("data/final_vote_filtered_movie_data.csv")
 ```
@@ -116,17 +117,17 @@ The distribution of revenue is strongly skewed to the right. The boxplot suggest
 
 Variables of interest:
 
-vote_average: This is the average rating given to the movie by viewers. We expect this to be correlated with the response variable, as good ratings will encourage more people to go see the movie, and if someone likes the movie they will be more likely to recommend it to their friends
+vote_average: This is the average rating given to the movie by viewers. We expect this to be correlated with the response variable, as good ratings will encourage more people to go see the movie, and if someone likes the movie they will be more likely to recommend it to their friends.
 
-spoken_languages: This is the number of different languages spoken in the movie. We hypothesize that if a movie has more languages in it, it will appeal to a broader audience and therefore earn greater revenue. 
+spoken_languages: This is the number of different languages spoken in the movie. We hypothesize that if a movie has more languages in it, it will appeal to a broader audience and therefore earn greater revenue. We created a new variable from this variable called "multi_language" that categorizes movies with multiple languges as "TRUE" and movies with one language as "FALSE."
 
-budget: This is the amount of money spent on producing the movie. We expect movies with a larger budget to earn more revenue, as the production company has more resources to put into the movie. 
+budget: This is the amount of money spent on producing the movie. We expect movies with a larger budget to earn more revenue, as the production company has more resources to put into the movie.
 
 runtime: This is the length of the movie. We think that people may be more willing to see shorter/average length movies, as it is less of a time commitment for them.
 
-release_date: This indicates the day, month, and year that the movie was released. We expect that the year will greatly impact gross revenue because, for instance, movies released right before or during the pandemic will have very low gross revenue as no one was able to go to the theaters. 
+release_date: This indicates the day, month, and year that the movie was released. We expect that the year will greatly impact gross revenue because, for instance, movies released right before or during the pandemic will have very low gross revenue as no one was able to go to the theaters. We created a new variable from this variable called "year" that only accounts for only the year (yyyy) that the movie was released in instead of the original date (yyyy/mm/dd).
 
-genres: This is a genre or list of genres associated with the movie. We expect movies tagged with more than one genre to appeal to a wider audience, thus driving up the number of people who go to see the movie and increasing gross revenue.
+genres: This is a genre or list of genres associated with the movie. We expect movies tagged with more than one genre to appeal to a wider audience, thus driving up the number of people who go to see the movie and increasing gross revenue. We created a new variable from this variable called "multi_genre" that categorizes movies with multiple genres as "TRUE" and movies with one genre as "FALSE."
 
 Method of approach:
 
@@ -354,40 +355,39 @@ movies |>
   ggpairs()
 ```
 
-## Carlie Section
-
 ```{r}
 # spoken languages
 
-movies |>
+languages_plot <- movies |>
   ggplot(aes(x = multi_language, y = log_revenue)) +
   geom_boxplot() + 
-  labs(x = "Number of Languages Spoken in Movie", 
+  labs(x = "Number of Languages
+Spoken in Movie", 
        y = "log(Revenue)", 
-       title = "Spoken Langauges in Movie vs. log(Revenue)"
+       title = "Spoken Languages in 
+Movie vs. log(Revenue)"
        ) + 
   scale_x_discrete(labels = c("FALSE" = "One", "TRUE" = "More than One"))
 
-```
-
-```{r}
 # genres 
 
-movies |>
+genre_plot <- movies |>
   ggplot(aes(x = multi_genre, y = log_revenue)) +
   geom_boxplot() + 
   labs(x = "Number of Genres in Movie", 
        y = "log(Revenue)", 
-       title = "Genres in Movie vs. log(Revenue)"
+       title = "Genres in Movie
+vs. log(Revenue)"
        ) + 
   scale_x_discrete(labels = c("FALSE" = "One", "TRUE" = "More than One"))
 
+languages_plot + genre_plot 
 ```
 
 ```{r}
 # budget
 
-movies |>
+budget_plot <- movies |>
   ggplot(aes(x = budget, y = log_revenue)) +
   geom_point() + 
   labs(
@@ -396,48 +396,76 @@ movies |>
     y = "log(Revenue)"
   ) +
   scale_x_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+
+# log budget 
+log_budget_plot <- movies |>
+  ggplot(aes(x = log(budget), y = log_revenue)) +
+  geom_point() + 
+  labs(
+    title = "log(Budget) vs.
+log(Revenue)",
+    x = "log(Budget)",
+    y = "log(Revenue)"
+  ) 
+
+budget_plot + log_budget_plot
 ```
 
-## Chrisie Section
+Based on the boxplots for the number of spoken languages in a movie, it seems that whether one language was spoken or multiple were does not have much of an impact on the logged revenue. This is evident based on the overlapping of the two boxplots.
+
+Based on the boxplots for the number of genres a movie is tagged for, it also appears that whether the movie is grouped into one genre or multiple genres does not have much of an impact on the logged revenue. Again, this is evident based on the overlapping of the two boxplots.
+
+Because of the extreme curvature present in the graph of budget vs. log(revenue), it makes sense to also do a log transformation on Budget in order to get the graph log(budget) vs. log(revenue) which is seen on the bottom right. The graph of log(budget) vs. log(revenue) has far less curvature and appears to take more of a linear shape than budget vs. log(revenue).
 
 ```{r}
 # vote
-movies |>
+voteplot <- movies |>
   ggplot(aes(x = vote_average, y = log_revenue)) +
   geom_point() + 
   labs(
-    title = "Vote Average vs. log(Revenue)",
+    title = "Vote Average
+vs. log(Revenue)",
     x = "Vote Average",
-    y = "log(Revenue) (in billions of dollars)"
-  ) +
-  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+    y = "log(Revenue)"
+  )
 ```
 
 ```{r}
 # runtime
-movies |>
+runtimeplot <- movies |>
   ggplot(aes(x = runtime, y = log_revenue)) +
   geom_point() + 
   labs(
     title = "Runtime vs. log(Revenue)",
     x = "Runtime (minutes)",
-    y = "log(Revenue) (in billions of dollars)"
-  ) +
-  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+    y = "log(Revenue)"
+  ) 
 ```
 
 ```{r}
-# release date
-movies |>
+voteplot + runtimeplot
+```
+
+According to the graph comparing vote average and logged revenue, there is a weak positive correlation. Movies with higher ratings tend to have slightly higher revenues. Most of the data points are also clustered between vote averages of 5 and 8.
+
+According to the graph comparing runtime and log(revenue), there is no clear positive or negative correlation. There are many data points clustered between 100 and 200 minutes, which makes sense considering the average length of most movies.
+
+```{r}
+# year
+yearplot <- movies |>
   ggplot(aes(x = year, y = log_revenue)) +
   geom_point() + 
   labs(
     title = "Release Date vs. log(Revenue)",
-    x = "Release Date (year)",
-    y = "log(Revenue) (in billions of dollars)"
+    x = "Year",
+    y = "log(Revenue)"
   ) +
   scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+
+yearplot
 ```
+
+According to the graph comparing year and log(revenue), there is a positive, weak correlation. Movies with more recent years tend to have a slightly higher logged revenue, which makes sense in the context of inflation. There are many data points clustered between 1975 and 2023.
 
 ## Interaction
 
