@@ -24,8 +24,8 @@ movies <- read_csv("data/final_vote_filtered_movie_data.csv")
 ```
 
 ## Introduction
-<span style="font-size:7px">
-Movies have been at the heart of pop culture for nearly a century. And while movies have changed a lot over the years, varying in length, theme, due to technological advances, and more, one thing has never changed–movies have remained as a dominant part of the entertainment industry. Yet, ever since the COVID-19 pandemic, the North American box office for movies has not recovered–it seems that people just aren’t going to movies as much as they used to. As mentioned in [@boxofficemojo2024], domestic box office gross revenue in 2019 reached nearly \$11.4 billion, while the yearly total from 2023 topped off at \$8.9 billion after a very slow two years in 2020 and 2021. With moviegoers back on the rise, the film industry and box offices are hopeful to end the decade on a high note and return back to their original state. As such, we are interested in investigating the trends in gross revenue for top movies and how various elements impact the amount of money that a movie makes.
+
+<span style="font-size:7px"> Movies have been at the heart of pop culture for nearly a century. And while movies have changed a lot over the years, varying in length, theme, due to technological advances, and more, one thing has never changed–movies have remained as a dominant part of the entertainment industry. Yet, ever since the COVID-19 pandemic, the North American box office for movies has not recovered–it seems that people just aren’t going to movies as much as they used to. As mentioned in [@boxofficemojo2024], domestic box office gross revenue in 2019 reached nearly \$11.4 billion, while the yearly total from 2023 topped off at \$8.9 billion after a very slow two years in 2020 and 2021. With moviegoers back on the rise, the film industry and box offices are hopeful to end the decade on a high note and return back to their original state. As such, we are interested in investigating the trends in gross revenue for top movies and how various elements impact the amount of money that a movie makes.
 
 Research Question: What are the key factors and metrics that most significantly influence a movie's gross revenue?
 
@@ -501,8 +501,7 @@ yearplot <- movies |>
     title = "Release Date vs. log(Revenue)",
     x = "Year",
     y = "log(Revenue)"
-  ) +
-  scale_y_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale()))
+  )
 
 yearplot
 ```
@@ -547,8 +546,4 @@ movies |>
   ) 
 ```
 
-The slope of each seems to differ slightly, but it seems that the effect of runtime on log(Revenue) is marginally stronger for multi-genre movies. We intend to do further analysis later in this project to investigate these interaction effects as well as other interactions of interest.
-</span>
-::: callout-important
-Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
-:::
+The slope of each seems to differ slightly, but it seems that the effect of runtime on log(Revenue) is marginally stronger for multi-genre movies. We intend to do further analysis later in this project to investigate these interaction effects as well as other interactions of interest. </span> ::: callout-important Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML. :::
