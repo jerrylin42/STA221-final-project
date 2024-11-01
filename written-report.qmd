@@ -83,8 +83,9 @@ plot1 = movies |>
   ggplot(aes(x = revenue)) +
   geom_histogram(bins = 20) + 
   labs(
-    title = "Revenue Hist",
-    x = "Revenue (in billions of dollars)", 
+    title = "Revenue Histogram",
+    x = "Revenue 
+(in billions of dollars)", 
     y = "Count"
   ) +
   scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
@@ -155,21 +156,21 @@ plot1= movies |>
   ggplot(aes(x = log_revenue)) +
   geom_histogram(bins = 20) + 
   labs(
-    title = "Histogram of Logged revenue",
-    x = "Logged Revenue (in billions of dollars)", 
+    title = "Histogram of
+log(Revenue)",
+    x = "log(Revenue)", 
     y = "Count"
-  ) +
-  scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
+  ) 
 
 #Boxplot
 plot2 = movies |>
   ggplot(aes(x = log_revenue)) +
   geom_boxplot() + 
   labs(
-    title = "Boxplot of Logged revenue Revenue",
-    x = "Logged Revenue (in billions of dollars)"
-  ) +
-  scale_x_continuous(labels = label_dollar(scale_cut = cut_short_scale()))
+    title = "Boxplot of 
+log(Revenue)",
+    x = "log(Revenue)"
+  )
 
 plot1+plot2
 #Summary statistics 
@@ -185,7 +186,7 @@ movies |>
   kable(digits = 3)
 ```
 
-Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and has a median of 17.22 logged billions of dollars and an IQR of 2.43.
+Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and log(Revenue) has a median of 17.22 and an IQR of 2.43.
 
 ```{r}
 #| fig-width: 5
@@ -196,7 +197,8 @@ plot1 = movies |>
   ggplot(aes(x = vote_average)) +
   geom_histogram(bins = 20) + 
   labs(
-    title = "Histogram of Average Votes",
+    title = "Histogram of 
+Average Votes",
     x = "Average Vote (in points)", 
     y = "Count"
   ) +
@@ -208,7 +210,8 @@ plot2 = movies |>
   ggplot(aes(x = vote_average)) +
   geom_boxplot() + 
   labs(
-    title = "Boxplot of Average Votes",
+    title = "Boxplot of
+Average Votes",
     x = "Average Vote (in points)"
   ) +
   scale_x_continuous(labels = label_number())
@@ -230,7 +233,7 @@ movies |>
 
 ```
 
-The predictor variable vote_average, measuring the average rating given to a movie by users, is roughly normally distirbuted and is unimodal. It has a few outliers on the right side, and has many on the left. The median is 6.57 points (out of ten), and the IQR is 1.08.
+The predictor variable, vote_average, which measures the average rating given to a movie by users, is roughly normally distributed and is unimodal. It has a few outliers on the right side, and has many on the left. The median is 6.57 points (out of ten), and the IQR is 1.08.
 
 ```{r}
 #| fig-width: 5
@@ -240,7 +243,8 @@ plot1 = movies |>
   ggplot(aes(x = runtime)) +
   geom_histogram(bins = 40) + 
   labs(
-    title = "Histogram of Movie Runtimes",
+    title = "Histogram of 
+Movie Runtimes",
     x = "Runtime (in minutes)", 
     y = "Count"
   ) + scale_x_continuous(limits = c(0, 250), labels = label_number())
@@ -250,7 +254,8 @@ plot2 = movies |>
   ggplot(aes(x = runtime)) +
   geom_boxplot() + 
   labs(
-    title = "Boxplot of Movie Runtimes",
+    title = "Boxplot of 
+Movie Runtimes",
     x = "Runtime (in minutes)"
   ) +
   scale_x_continuous(labels = label_number())
@@ -282,7 +287,8 @@ plot1 = movies |>
   ggplot(aes(x = year)) +
   geom_histogram(bins = 20) + 
   labs(
-    title = "Histogram of Movie Release Years",
+    title = "Histogram of 
+Release Years",
     x = "Release Year (in years)", 
     y = "Count"
   ) +
@@ -293,7 +299,8 @@ plot2 = movies |>
   ggplot(aes(x = year)) +
   geom_boxplot() + 
   labs(
-    title = "Boxplot of Movie Release Years",
+    title = "Boxplot of
+Release Years",
     x = "Release Year (in years)"
   ) +
   scale_x_continuous(labels = label_number())
@@ -325,7 +332,8 @@ plot1 = movies |>
   ggplot(aes(x = budget / 1e6)) +
   geom_histogram(bins = 40) + 
   labs(
-    title = "Histogram of Movie Budgets",
+    title = "Histogram of
+Movie Budgets",
     x = "Budget (in millions of dollars)", 
     y = "Count"
   ) + scale_x_continuous(labels = scales::dollar_format(scale = 1, suffix = "M"))
@@ -335,7 +343,8 @@ plot2 = movies |>
   ggplot(aes(x = budget / 1e6)) +
   geom_boxplot() + 
   labs(
-    title = "Boxplot of Movie Budgets",
+    title = "Boxplot of 
+Movie Budgets",
     x = "Budget (in millions of dollars)"
   ) +
   scale_x_continuous(labels = scales::dollar_format(scale = 1, suffix = "M"))
@@ -368,10 +377,6 @@ movies |>
   mutate(proportion = n / sum(n)) |>
   kable(digits = 3)
 
-
-
-
-
 ```
 
 About 69 percent of the data is in just one language, and 31 percent features other languages.
@@ -382,8 +387,6 @@ movies |>
   count(multi_genre) |>
   mutate(proportion = n / sum(n)) |>
   kable(digits = 3)
-
-
 
 ```
 
