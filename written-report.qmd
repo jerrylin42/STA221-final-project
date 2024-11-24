@@ -16,9 +16,9 @@ library(tidyverse)
 library(tidymodels)
 library(knitr)
 library(readr)
-library(GGally)
 library(dplyr)
 library(patchwork)
+library(rms)
 
 movies <- read_csv("data/final_vote_filtered_movie_data.csv")
 ```
@@ -88,16 +88,12 @@ genres: This is a genre or list of genres associated with the movie. We expect m
 
 Method of approach:
 
-We plan to use multiple linear regression to predict gross revenue, but we will log transform gross revenue because we can see from our EDA that revenue is extremely skewed in its original form.
+We plan to use multiple linear regression to predict gross revenue, but we will log transform gross revenue because we can see from our EDA (below) that revenue is extremely skewed in its original form.
 
 ```{r}
 movies <- movies |>
   mutate(log_revenue = log(movies$revenue))
 ```
-
-## Data dictionary
-
-The data dictionary can be found here: [data/README.md](data/README.md)
 
 ## Univariate EDA
 
@@ -210,6 +206,11 @@ budget_plot + log_budget_plot
 Because of the extreme curvature present in the graph of budget vs. log(revenue), it makes sense to also do a log transformation on Budget in order to get the graph log(budget) vs. log(revenue) which is seen on the bottom right. The graph of log(budget) vs. log(revenue) has far less curvature and appears to take more of a linear shape than budget vs. log(revenue).
 
 ```{r}
+movies <- movies |>
+  mutate(log_budget = log(movies$budget))
+```
+
+```{r}
 # year
 yearplot <- movies |>
   ggplot(aes(x = year, y = log_revenue)) +
@@ -260,3 +261,45 @@ movies |>
 The slope of each seems to differ slightly, but it seems that the effect of runtime on log(Revenue) is marginally stronger for multi-genre movies. We intend to do further analysis later in this project to investigate these interaction effects as well as other interactions of interest.
 
 ## Analysis
+
+We start off by fitting a model with every term in it.
+
+```{r}
+
+interaction_model <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_language + multi_genre*runtime + multi_genre*vote_average)
+
+tidy(interaction_model) |>
+  kable(digits = 3)
+
+summary(interaction_model)$r.squared
+```
+
+Then we fit a base model without the interaction terms.
+
+```{r}
+base_model <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_language)
+
+tidy(base_model) |>
+  kable(digits = 3)
+
+summary(base_model)$r.squared
+
+#ask about what to do wtih interaction terms?????????? bc based on base model, the categorical ones are not signifcant. 
+
+```
+
+Based off of our lm output for the base model (No interaction terms), it looks as if there is significant statistical evidence to suggest that vote_average, log_budget, runtime, and year all are useful predictors for log(revenue), as the p-values for each of these coefficients are all very close to 0. However, there are issues with using the multi_genre and multi_language because their coefficients have p-values on the larger end, suggesting that they may not be useful variables to add to our model.
+
+We were also suprised that the year coefficent has a negative value, as that would imply that as the movie is more recent, the log(revenue) decreases, which is interesting.
+
+Next, we will take care of the issue of multicollinearity by using the VIF to see which predcictor variables could have correlation.
+
+```{r}
+vif(base_model)
+```
+
+Based off of our VIF function, it seems as if there are no variables that raise issues of multicollinearity because all of our variables have a VIF much lower than 10.
+
+-   augment + look at residuals to see if constant variance and normality of residuals is satisfied
+
+-   anova/f-test to compare. (when comparing, do we use AIC, BIC, adj-r\^2, or RMSE?)
