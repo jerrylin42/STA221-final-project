@@ -39,7 +39,7 @@ The source of the dataset is taken from TMDb (The Movie Database), which is an o
 
 There were 953629 observations in the original dataset, each representing a single film. There were 24 columns in this dataset, with some of the most important being the name (an identifier), release year, runtime, genres, rating, votes, and revenue.
 
-## Exploratory data analysis
+## Exploratory Data Analysis
 
 We filtered the original dataset outside of this project first because the original dataset of almost 1 million rows was far too large to be able to run efficiently in RStudio; as such, we filtered for where the movies had more than 100 votes, meaning more than 100 people submitted ratings for the movie. After filtering, there are now 18086 observations, and we were able to import this filtered dataset into Rstudio (The file name was "final_vote_filtered_movie_data.csv").
 
@@ -70,7 +70,7 @@ movies <- movies |>
   drop_na(multi_language)
 ```
 
-## Analysis approach
+## Analysis Approach
 
 Variables of interest:
 
@@ -262,19 +262,9 @@ The slope of each seems to differ slightly, but it seems that the effect of runt
 
 ## Analysis
 
-We start off by fitting a model with every term in it.
+### Base Model
 
-```{r}
-
-interaction_model <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_language + multi_genre*runtime + multi_genre*vote_average)
-
-tidy(interaction_model) |>
-  kable(digits = 3)
-
-summary(interaction_model)$r.squared
-```
-
-Then we fit a base model without the interaction terms.
+We fit a base model without the interaction terms first.
 
 ```{r}
 base_model <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_language)
@@ -282,23 +272,67 @@ base_model <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtim
 tidy(base_model) |>
   kable(digits = 3)
 
-summary(base_model)$r.squared
-
-#ask about what to do wtih interaction terms?????????? bc based on base model, the categorical ones are not signifcant. 
+glance(base_model) |> select(r.squared, adj.r.squared, AIC, BIC)
 
 ```
 
-Based off of our lm output for the base model (No interaction terms), it looks as if there is significant statistical evidence to suggest that vote_average, log_budget, runtime, and year all are useful predictors for log(revenue), as the p-values for each of these coefficients are all very close to 0. However, there are issues with using the multi_genre and multi_language because their coefficients have p-values on the larger end, suggesting that they may not be useful variables to add to our model.
+Based off of our lm output for the base model (No interaction terms), it looks as if there is significant statistical evidence to suggest that vote_average, log_budget, runtime, and year all are useful predictors for log(revenue), as the p-values for each of these coefficients are all very close to 0. However, there are potential issues with using the multi_genre and multi_language because their coefficients have p-values on the larger end, suggesting that they may not be useful variables to add to our model.
 
-We were also suprised that the year coefficent has a negative value, as that would imply that as the movie is more recent, the log(revenue) decreases, which is interesting.
+We were also surprised that the year coefficent has a negative value, as that would imply that as the movie is more recent, the log(revenue) decreases, which is interesting.
 
-Next, we will take care of the issue of multicollinearity by using the VIF to see which predcictor variables could have correlation.
+We are now interested in analyzing whether the added interaction terms are worth adding in the model to use as predictors of the log(revenue).
+
+### Multicollinearity Analysis 
+
+Then, we will take care of the issue of multicollinearity by using the VIF to see which predcictor variables could have correlation.
 
 ```{r}
 vif(base_model)
 ```
 
 Based off of our VIF function, it seems as if there are no variables that raise issues of multicollinearity because all of our variables have a VIF much lower than 10.
+
+### Investigating Genre/Runtime Interaction 
+
+```{r}
+
+interaction_genreruntime <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_language + multi_genre*runtime)
+
+
+tidy(interaction_genreruntime) |>
+  kable(digits = 3)
+
+
+glance(interaction_genreruntime) |> select(r.squared, adj.r.squared, AIC, BIC)
+```
+
+```{r}
+kable(anova(base_model, interaction_genreruntime), format = "markdown", digits = 3)
+```
+
+(WRITE SOMETHING COMPARING THE TWO MODELS AND HOW WE NOW WILL ADD IT INTO OUR MODEL, THEN PROCEED TO TEST THE OTHER TERM)
+
+### Investigating Genre/Vote Average Interaction
+
+Since we already added the multi_genre and runtime interaction, we will now test the model with BOTH interaction terms against the model with ONLY the genre and runtime interaction.
+
+```{r}
+
+interaction_genre_run_vote <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_language + multi_genre*runtime + multi_genre*vote_average)
+
+
+tidy(interaction_genre_run_vote) |>
+  kable(digits = 3)
+
+
+glance(interaction_genre_run_vote) |> select(r.squared, adj.r.squared, AIC, BIC)
+```
+
+```{r}
+kable(anova(interaction_genreruntime, interaction_genre_run_vote), format = "markdown", digits = 3)
+```
+
+(WRITE ABOUT HOW ADDING THIS TERM IS BAD BC ADJ R SQR DECR, AIC/BIC BOTH INCR, AND P VALUE IS SUPER LARGE).
 
 -   augment + look at residuals to see if constant variance and normality of residuals is satisfied
 
