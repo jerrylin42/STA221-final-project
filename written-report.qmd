@@ -284,7 +284,7 @@ We are now interested in analyzing whether the added interaction terms are worth
 
 ### Multicollinearity Analysis
 
-Then, we will take care of the issue of multicollinearity by using the VIF to see which predcictor variables could have correlation.
+Then, we will take care of the issue of multicollinearity by using the VIF to see which predictor variables could have correlation.
 
 ```{r}
 vif(base_model)
@@ -312,6 +312,9 @@ kable(anova(base_model, interaction_genreruntime), format = "markdown", digits =
 
 (WRITE SOMETHING COMPARING THE TWO MODELS AND HOW WE NOW WILL ADD IT INTO OUR MODEL, THEN PROCEED TO TEST THE OTHER TERM)
 
+CARLIEEEEEEE
+-   comparing baseline with adding one interaction; look at adjusted r squared, aic, bic, and f test
+
 ### Investigating Genre/Vote Average Interaction
 
 Since we already added the multi_genre and runtime interaction, we will now test the model with BOTH interaction terms against the model with ONLY the genre and runtime interaction.
@@ -334,9 +337,13 @@ kable(anova(interaction_genreruntime, interaction_genre_run_vote), format = "mar
 
 (WRITE ABOUT HOW ADDING THIS TERM IS BAD BC ADJ R SQR DECR, AIC/BIC BOTH INCR, AND P VALUE IS SUPER LARGE).
 
+CARLIEEEEEEE
+
 \- remove multi-language
 
 -remove the interaction b/w vote avg and multigenre
+
+-   second interaction term; compare it to model with the previous interaction term already added\^\^, compare adjusted r squared, aic, bic, f test; p val large and aic bic increased
 
 ```{r}
 #Final model
@@ -352,7 +359,45 @@ glance(final_model) |> select(r.squared, adj.r.squared, AIC, BIC)
 #Testing if we keep multi-language
 kable(anova(final_model, interaction_genreruntime), format = "markdown", digits = 3)
 ```
+SAMIR TRAVERRSSSS
+-   removing multi language; F test and see it is not significant; technically our final model
 
--   augment + look at residuals to see if constant variance and normality of residuals is satisfied
+```{r}
+data_augmented <- augment(final_model)
 
--   anova/f-test to compare. (when comparing, do we use AIC, BIC, adj-r\^2, or RMSE?)
+ggplot(data = data_augmented, aes(x =.fitted, y = .std.resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", size = 1) +
+  labs(
+    title = "Standardized Residuals vs. Fitted Values",
+    x = "Fitted Values",
+    y = "Standardized Residuals"
+  )
+```
+CHRISIEEE
+
+-   test for assumptions; mention the 4 but start with constant variance
+
+```{r}
+data_augmented |> 
+  ggplot(aes(x = .resid)) +
+  geom_histogram() +
+  labs(
+    title = "Histogram of Residuals",
+    x = "Residuals",
+    y = "Count"
+  )
+
+```
+
+CHRISIEEE
+-   this one tests for normality
+
+-   General notes: we did not meet the assumptions of constant variance (not as good as it could be) and independence (should be but there are sequels; no way to account if a movie is a sequel or not; franchise --\> past movies will affect future movies; well known producers and multiple movies --\> people will watch all their movies just because); linearity and normality met
+
+-   mention linearity and independence (no code)\^\^
+
+-   need to interpret coefficients for final model
+
+SAMIR TRAVERSSSSSSS
+-   interpret all coefficients (remember it is log logged –\> gotta think)
