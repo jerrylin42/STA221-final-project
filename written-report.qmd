@@ -282,7 +282,7 @@ We were also surprised that the year coefficent has a negative value, as that wo
 
 We are now interested in analyzing whether the added interaction terms are worth adding in the model to use as predictors of the log(revenue).
 
-### Multicollinearity Analysis 
+### Multicollinearity Analysis
 
 Then, we will take care of the issue of multicollinearity by using the VIF to see which predcictor variables could have correlation.
 
@@ -292,7 +292,7 @@ vif(base_model)
 
 Based off of our VIF function, it seems as if there are no variables that raise issues of multicollinearity because all of our variables have a VIF much lower than 10.
 
-### Investigating Genre/Runtime Interaction 
+### Investigating Genre/Runtime Interaction
 
 ```{r}
 
@@ -333,6 +333,25 @@ kable(anova(interaction_genreruntime, interaction_genre_run_vote), format = "mar
 ```
 
 (WRITE ABOUT HOW ADDING THIS TERM IS BAD BC ADJ R SQR DECR, AIC/BIC BOTH INCR, AND P VALUE IS SUPER LARGE).
+
+\- remove multi-language
+
+-remove the interaction b/w vote avg and multigenre
+
+```{r}
+#Final model
+final_model <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
+
+tidy(final_model) |>
+  kable(digits = 3)
+
+glance(final_model) |> select(r.squared, adj.r.squared, AIC, BIC)
+
+
+
+#Testing if we keep multi-language
+kable(anova(final_model, interaction_genreruntime), format = "markdown", digits = 3)
+```
 
 -   augment + look at residuals to see if constant variance and normality of residuals is satisfied
 
