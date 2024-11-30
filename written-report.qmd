@@ -220,7 +220,6 @@ yearplot <- movies |>
     x = "Year",
     y = "log(Revenue)"
   )
-
 yearplot
 ```
 
@@ -312,8 +311,7 @@ kable(anova(base_model, interaction_genreruntime), format = "markdown", digits =
 
 (WRITE SOMETHING COMPARING THE TWO MODELS AND HOW WE NOW WILL ADD IT INTO OUR MODEL, THEN PROCEED TO TEST THE OTHER TERM)
 
-CARLIEEEEEEE
--   comparing baseline with adding one interaction; look at adjusted r squared, aic, bic, and f test
+CARLIEEEEEEE - comparing baseline with adding one interaction; look at adjusted r squared, aic, bic, and f test
 
 ### Investigating Genre/Vote Average Interaction
 
@@ -359,8 +357,8 @@ glance(final_model) |> select(r.squared, adj.r.squared, AIC, BIC)
 #Testing if we keep multi-language
 kable(anova(final_model, interaction_genreruntime), format = "markdown", digits = 3)
 ```
-SAMIR TRAVERRSSSS
--   removing multi language; F test and see it is not significant; technically our final model
+
+SAMIR TRAVERRSSSS - removing multi language; F test and see it is not significant; technically our final model
 
 ```{r}
 data_augmented <- augment(final_model)
@@ -374,6 +372,34 @@ ggplot(data = data_augmented, aes(x =.fitted, y = .std.resid)) +
     y = "Standardized Residuals"
   )
 ```
+
+### Investigating Influential Points
+
+```{r}
+
+movies |>
+  mutate(ratio = log_revenue / log_budget) |>
+  arrange(ratio) |>
+  summarise(average_ratio = mean(ratio),
+            st_dev_ratio = sd(ratio))
+
+lower_outlier_ratio <- 1.03 -(0.1356893 * 3)
+upper_outlier_ratio <-  1.03 + (0.1356893 * 3)
+  
+data_augmented |>
+  filter(.std.resid > 3 | .std.resid < -3) |>
+  mutate(ratio = log_revenue / log_budget) |>
+  filter(ratio < lower_outlier_ratio | ratio > upper_outlier_ratio)
+
+# should we do anything about these points? common theme amongst points that have high .std.resid is that they have log_revenue to log_budget ratios that are very different from the mean  
+
+# see below how 49 of the 61 total points with ratios that are 3 st. devs. away from the mean also happen to have .std.resid that are 3 st. devs. away from the mean
+
+movies |>
+  mutate(ratio = log_revenue / log_budget) |>
+  filter(ratio < lower_outlier_ratio | ratio > upper_outlier_ratio)
+```
+
 CHRISIEEE
 
 -   test for assumptions; mention the 4 but start with constant variance
@@ -390,8 +416,7 @@ data_augmented |>
 
 ```
 
-CHRISIEEE
--   this one tests for normality
+CHRISIEEE - this one tests for normality
 
 -   General notes: we did not meet the assumptions of constant variance (not as good as it could be) and independence (should be but there are sequels; no way to account if a movie is a sequel or not; franchise --\> past movies will affect future movies; well known producers and multiple movies --\> people will watch all their movies just because); linearity and normality met
 
@@ -399,5 +424,4 @@ CHRISIEEE
 
 -   need to interpret coefficients for final model
 
-SAMIR TRAVERSSSSSSS
--   interpret all coefficients (remember it is log logged –\> gotta think)
+SAMIR TRAVERSSSSSSS - interpret all coefficients (remember it is log logged –\> gotta think)
