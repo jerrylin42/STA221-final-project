@@ -365,9 +365,7 @@ ggplot(data = data_augmented, aes(x =.fitted, y = .std.resid)) +
   )
 ```
 
-CHRISIEEE
-
--   test for assumptions; mention the 4 but start with constant variance
+Our model does not satisfy the constant variance assumption, which indicates that the variability in our data could be improved. In the scatter plot of Standardized Residuals vs. Fitted Values, the points are not randomly or evenly distributed around the red line. Specifically, there are outliers that are noticeable near the top left, and many points are densely clustered below the red line on the right side of the plot. Our model meets the linearity assumption because we cannot predict with strong accuracy if a residual will be positive or negative.
 
 ```{r}
 data_augmented |> 
@@ -381,11 +379,7 @@ data_augmented |>
 
 ```
 
-CHRISIEEE - this one tests for normality
-
--   General notes: we did not meet the assumptions of constant variance (not as good as it could be) and independence (should be but there are sequels; no way to account if a movie is a sequel or not; franchise --\> past movies will affect future movies; well known producers and multiple movies --\> people will watch all their movies just because); linearity and normality met
-
--   mention linearity and independence (no code)\^\^
+Our model meets the normality assumption. According to the Histogram of Residuals, we can see that the residuals are approximately normally distributed, following a bell-curve shape centered around 0. Our model does not meet the independence assumption because we cannot distinguish movie sequels or identify whether movies belong to the same company or franchise. This limitation could introduce bias into our data since viewers often tend to watch sequels or movies produced by the same company (e.g., Marvel movies), which creates a dependency between observations. 
 
 -   need to interpret coefficients for final model
 
