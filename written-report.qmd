@@ -352,8 +352,6 @@ tidy(final_model) |>
 
 glance(final_model) |> select(r.squared, adj.r.squared, AIC, BIC)
 
-
-
 #Testing if we keep multi-language
 kable(anova(final_model, interaction_genreruntime), format = "markdown", digits = 3)
 ```
@@ -389,15 +387,27 @@ upper_outlier_ratio <-  1.03 + (0.1356893 * 3)
 data_augmented |>
   filter(.std.resid > 3 | .std.resid < -3) |>
   mutate(ratio = log_revenue / log_budget) |>
-  filter(ratio < lower_outlier_ratio | ratio > upper_outlier_ratio)
+  filter(ratio < lower_outlier_ratio | ratio > upper_outlier_ratio) |>
+  arrange(desc(ratio))
 
 # should we do anything about these points? common theme amongst points that have high .std.resid is that they have log_revenue to log_budget ratios that are very different from the mean  
 
 # see below how 49 of the 61 total points with ratios that are 3 st. devs. away from the mean also happen to have .std.resid that are 3 st. devs. away from the mean
 
-movies |>
+nooutliers <- movies |>
   mutate(ratio = log_revenue / log_budget) |>
-  filter(ratio < lower_outlier_ratio | ratio > upper_outlier_ratio)
+  filter(ratio >= lower_outlier_ratio & ratio <= upper_outlier_ratio)
+```
+
+```{r}
+# final model no outliers test
+
+nooutliers_model <- lm(data = nooutliers, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
+
+tidy(nooutliers_model) |>
+  kable(digits = 3)
+
+glance(nooutliers_model) |> select(r.squared, adj.r.squared, AIC, BIC)
 ```
 
 CHRISIEEE
