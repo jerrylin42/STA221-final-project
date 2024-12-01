@@ -375,40 +375,37 @@ ggplot(data = data_augmented, aes(x =.fitted, y = .std.resid)) +
 
 ```{r}
 
-movies |>
+# we noticed that a lot of the potential "influential points" (based on .std.resid < 3 or > 3) tend to have very different log revenue vs. log budget values
+
+stdresid <- data_augmented |>
+  filter(.std.resid > 3 | .std.resid < -3) |>
+  mutate(ratio = log_revenue / log_budget)
+
+# code to calculate ratio of log revenue to log budget for original movies dataset
+
+ratios <- movies |>
   mutate(ratio = log_revenue / log_budget) |>
   arrange(ratio) |>
   summarise(average_ratio = mean(ratio),
             st_dev_ratio = sd(ratio))
 
-lower_outlier_ratio <- 1.03 -(0.1356893 * 3)
+# used +/- 3 standard deviations to find a lower and upper bound
+
+lower_outlier_ratio <- 1.03 - (0.1356893 * 3)
 upper_outlier_ratio <-  1.03 + (0.1356893 * 3)
-  
-data_augmented |>
-  filter(.std.resid > 3 | .std.resid < -3) |>
-  mutate(ratio = log_revenue / log_budget) |>
-  filter(ratio < lower_outlier_ratio | ratio > upper_outlier_ratio) |>
-  arrange(desc(ratio))
 
-# should we do anything about these points? common theme amongst points that have high .std.resid is that they have log_revenue to log_budget ratios that are very different from the mean  
-
-# see below how 49 of the 61 total points with ratios that are 3 st. devs. away from the mean also happen to have .std.resid that are 3 st. devs. away from the mean
+# filtered the data set to remove extreme points, which often occur due to data misentry
 
 nooutliers <- movies |>
   mutate(ratio = log_revenue / log_budget) |>
   filter(ratio >= lower_outlier_ratio & ratio <= upper_outlier_ratio)
+
+
 ```
 
-```{r}
-# final model no outliers test
+We dove deeper into our potential influential points and began to look for a pattern in the data. After not finding anything to indicate that a certain genre, language, or runtime length may be causing some sort of abnormality, we looked to log_revenue and log_budget. Interestingly, we found that the ratio between log_revenue and log_budget tended to be much more extreme for our influential points as compared to the average of the entire data set (see calculations in appendix). As such, we looked at a few specific data points to see if there were potential issues; we found data entry errors were present. For instance, the movie *Kiss of the Spider Woman* has a reported budget of \$11, but according to the American Film Institute, the actual budget was north of \$1.5 million. When briefly looking at a few other data points, this was the case for multiple other movies with extreme log_revenue to log_budget ratios as well.
 
-nooutliers_model <- lm(data = nooutliers, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
-
-tidy(nooutliers_model) |>
-  kable(digits = 3)
-
-glance(nooutliers_model) |> select(r.squared, adj.r.squared, AIC, BIC)
-```
+When fitting our final model based on the data without these points present, we saw that our $R^2$ value increased by nearly 4%. We believe this is more than enough evidence to suggest that our model does a better job of predicting movie revenue when movies with extreme log_revenue to log_budget ratios are not present in the data, because they are likely the result of data entry errors. It is important to note that ultimately, removing all these movies is not perfect, as it is entirely possible that a movie may have a very low budget and very high revenue, or vice versa.
 
 CHRISIEEE
 
