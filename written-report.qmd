@@ -263,7 +263,7 @@ The slope of each seems to differ slightly, but it seems that the effect of runt
 
 ### Base Model
 
-We fit a base model without the interaction terms first.
+We fit a base model *without* the interaction terms first.
 
 ```{r}
 base_model <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_language)
@@ -275,11 +275,9 @@ glance(base_model) |> select(r.squared, adj.r.squared, AIC, BIC)
 
 ```
 
-Based off of our lm output for the base model (No interaction terms), it looks as if there is significant statistical evidence to suggest that vote_average, log_budget, runtime, and year all are useful predictors for log(revenue), as the p-values for each of these coefficients are all very close to 0. However, there are potential issues with using the multi_genre and multi_language because their coefficients have p-values on the larger end, suggesting that they may not be useful variables to add to our model.
+Based off of our output for the base model (no interaction terms), it looks as if there is significant statistical evidence to suggest that vote_average, log_budget, runtime, and year all are useful predictors for log(revenue), as the p-values for each of these coefficients are all very close to 0. However, there are potential issues with using the multi_genre and multi_language because their coefficients have p-values on the larger end, suggesting that they may not be useful variables to add to our model.
 
-We were also surprised that the year coefficent has a negative value, as that would imply that as the movie is more recent, the log(revenue) decreases, which is interesting.
-
-We are now interested in analyzing whether the added interaction terms are worth adding in the model to use as predictors of the log(revenue).
+We were also surprised that the year coefficent has a negative value, as that would imply that as the movie is more recent, the log(revenue) decreases, which is interesting. We are now interested in analyzing whether the added interaction terms are worth adding in the model to use as predictors of the log(revenue).
 
 ### Multicollinearity Analysis
 
@@ -291,7 +289,7 @@ vif(base_model)
 
 Based off of our VIF function, it seems as if there are no variables that raise issues of multicollinearity because all of our variables have a VIF much lower than 10.
 
-### Investigating Genre/Runtime Interaction
+### Investigating Multi-Genre/Runtime Interaction
 
 ```{r}
 
@@ -309,13 +307,15 @@ glance(interaction_genreruntime) |> select(r.squared, adj.r.squared, AIC, BIC)
 kable(anova(base_model, interaction_genreruntime), format = "markdown", digits = 3)
 ```
 
-(WRITE SOMETHING COMPARING THE TWO MODELS AND HOW WE NOW WILL ADD IT INTO OUR MODEL, THEN PROCEED TO TEST THE OTHER TERM)
+When adding the interaction effect between multi_genre and runtime to our model, our results differ from the base model in that, now, adding multi_genre as a predictor does seem to be useful and, additionally, the interaction between multi_genre and runtime is also statistically significant (both indicated by p-values of nearly 0). Still, we see evidence to suggest that multi_language may not be a useful predictor.
 
-CARLIEEEEEEE - comparing baseline with adding one interaction; look at adjusted r squared, aic, bic, and f test
+In effect, when running a nested F-test, our output shows that the more complex model, which includes the interaction effect between multi_genre and runtime, does a significantly better job of predicting movie revenue than the base model which does not contain it—this is again indicated by a resulting p-value of nearly 0. Additionally, using model comparison diagnostics, we see that the new model (including interaction effect) has a slightly higher adjusted $R^2$ value of 46.56% as compared to the base model's adjusted $R^2$ of 46.45%. Similarly, the new model's BIC drops by nearly 7 points (from 26356.40 to 26349.53), suggesting an improvement. We are focused on using BIC because it penalizes more harshly for additional parameters than AIC, so it will allow us to find the model which best fits our data.
 
-### Investigating Genre/Vote Average Interaction
+In effect, we will add the interaction effect between multi_genre and runtime to our final model. We now look to see if the other interaction effect we are interested in, multi_genre and vote_average, will be a useful additional predictor.
 
-Since we already added the multi_genre and runtime interaction, we will now test the model with BOTH interaction terms against the model with ONLY the genre and runtime interaction.
+### Investigating Multi-Genre/Vote Average Interaction
+
+Since we already added the multi_genre and runtime interaction, we will now test the model with BOTH interaction terms against the model with ONLY the multi_genre and runtime interaction.
 
 ```{r}
 
@@ -333,15 +333,9 @@ glance(interaction_genre_run_vote) |> select(r.squared, adj.r.squared, AIC, BIC)
 kable(anova(interaction_genreruntime, interaction_genre_run_vote), format = "markdown", digits = 3)
 ```
 
-(WRITE ABOUT HOW ADDING THIS TERM IS BAD BC ADJ R SQR DECR, AIC/BIC BOTH INCR, AND P VALUE IS SUPER LARGE).
+From the F-test results alone, we have strong evidence to suggest that adding the interaction effect between multi_genre and vote_average does not significantly improve our model—this is indicated by the F-test p-value of 0.577. Additionally, both the $R^2$ value and BIC are worse for the model with the added interaction effect between multi_genre and vote_average, as compared to the model from the previous section without it (**see appendix)**. **SHOULD WE JUST MOVE MODEL OUTPUT TO APPENDIX TO SAVE SPACE?**
 
-CARLIEEEEEEE
-
-\- remove multi-language
-
--remove the interaction b/w vote avg and multigenre
-
--   second interaction term; compare it to model with the previous interaction term already added\^\^, compare adjusted r squared, aic, bic, f test; p val large and aic bic increased
+Our output also continues to prove that multi_language is not a useful predictor variable, so we will remove it from future consideration; also, we will not put the interaction between multi_genre and vote_average in our final model.
 
 ```{r}
 #Final model
@@ -371,7 +365,33 @@ ggplot(data = data_augmented, aes(x =.fitted, y = .std.resid)) +
   )
 ```
 
-### Investigating Influential Points
+CHRISIEEE
+
+-   test for assumptions; mention the 4 but start with constant variance
+
+```{r}
+data_augmented |> 
+  ggplot(aes(x = .resid)) +
+  geom_histogram() +
+  labs(
+    title = "Histogram of Residuals",
+    x = "Residuals",
+    y = "Count"
+  )
+
+```
+
+CHRISIEEE - this one tests for normality
+
+-   General notes: we did not meet the assumptions of constant variance (not as good as it could be) and independence (should be but there are sequels; no way to account if a movie is a sequel or not; franchise --\> past movies will affect future movies; well known producers and multiple movies --\> people will watch all their movies just because); linearity and normality met
+
+-   mention linearity and independence (no code)\^\^
+
+-   need to interpret coefficients for final model
+
+SAMIR TRAVERSSSSSSS - interpret all coefficients (remember it is log logged –\> gotta think)
+
+### Investigating Influential Points (IGNORE FOR NOW)
 
 ```{r}
 
@@ -406,29 +426,3 @@ nooutliers <- movies |>
 We dove deeper into our potential influential points and began to look for a pattern in the data. After not finding anything to indicate that a certain genre, language, or runtime length may be causing some sort of abnormality, we looked to log_revenue and log_budget. Interestingly, we found that the ratio between log_revenue and log_budget tended to be much more extreme for our influential points as compared to the average of the entire data set (see calculations in appendix). As such, we looked at a few specific data points to see if there were potential issues; we found data entry errors were present. For instance, the movie *Kiss of the Spider Woman* has a reported budget of \$11, but according to the American Film Institute, the actual budget was north of \$1.5 million. When briefly looking at a few other data points, this was the case for multiple other movies with extreme log_revenue to log_budget ratios as well.
 
 When fitting our final model based on the data without these points present, we saw that our $R^2$ value increased by nearly 4%. We believe this is more than enough evidence to suggest that our model does a better job of predicting movie revenue when movies with extreme log_revenue to log_budget ratios are not present in the data, because they are likely the result of data entry errors. It is important to note that ultimately, removing all these movies is not perfect, as it is entirely possible that a movie may have a very low budget and very high revenue, or vice versa.
-
-CHRISIEEE
-
--   test for assumptions; mention the 4 but start with constant variance
-
-```{r}
-data_augmented |> 
-  ggplot(aes(x = .resid)) +
-  geom_histogram() +
-  labs(
-    title = "Histogram of Residuals",
-    x = "Residuals",
-    y = "Count"
-  )
-
-```
-
-CHRISIEEE - this one tests for normality
-
--   General notes: we did not meet the assumptions of constant variance (not as good as it could be) and independence (should be but there are sequels; no way to account if a movie is a sequel or not; franchise --\> past movies will affect future movies; well known producers and multiple movies --\> people will watch all their movies just because); linearity and normality met
-
--   mention linearity and independence (no code)\^\^
-
--   need to interpret coefficients for final model
-
-SAMIR TRAVERSSSSSSS - interpret all coefficients (remember it is log logged –\> gotta think)
