@@ -259,7 +259,7 @@ movies |>
 
 The slope of each seems to differ slightly, but it seems that the effect of runtime on log(Revenue) is marginally stronger for multi-genre movies. We intend to do further analysis later in this project to investigate these interaction effects as well as other interactions of interest.
 
-## Analysis
+## Methodology and Analysis
 
 ### Base Model
 
@@ -333,9 +333,13 @@ glance(interaction_genre_run_vote) |> select(r.squared, adj.r.squared, AIC, BIC)
 kable(anova(interaction_genreruntime, interaction_genre_run_vote), format = "markdown", digits = 3)
 ```
 
-From the F-test results alone, we have strong evidence to suggest that adding the interaction effect between multi_genre and vote_average does not significantly improve our model—this is indicated by the F-test p-value of 0.577. Additionally, both the $R^2$ value and BIC are worse for the model with the added interaction effect between multi_genre and vote_average, as compared to the model from the previous section without it (**see appendix)**. **SHOULD WE JUST MOVE MODEL OUTPUT TO APPENDIX TO SAVE SPACE?**
+From the F-test results alone, we have strong evidence to suggest that adding the interaction effect between multi_genre and vote_average does not significantly improve our model—this is indicated by the F-test p-value of 0.577. Additionally, both the $R^2$ value and BIC are worse for the model with the added interaction effect between multi_genre and vote_average, as compared to the model from the previous section without it.
 
 Our output also continues to prove that multi_language is not a useful predictor variable, so we will remove it from future consideration; also, we will not put the interaction between multi_genre and vote_average in our final model.
+
+## Results
+
+Therefore, below is our final model we decide to use:
 
 ```{r}
 #Final model
@@ -346,17 +350,11 @@ tidy(final_model) |>
 
 glance(final_model) |> select(r.squared, adj.r.squared, AIC, BIC)
 
-#Testing if we keep multi-language
-kable(anova(final_model, interaction_genreruntime), format = "markdown", digits = 3)
 ```
 
-```{r}
-exp(-.002)-exp(-.013)
-```
+The p-values for every coefficient are near-zero, suggesting that all these coefficients are statistically significant for predicting the log(revenue).
 
--   
-
--   When all variables in the model are set to zero, we would expect the movie to make exp(24.8) dollars. However, this interpretation is not relevant because there are variables like year and log_budget that would never be zero, particularly since we filtered out movies that were below a nonzero threshold for both these variables.
+-   When vote_average is 0, budget is 1, runtime is 0, year is 0, multi_genre is FALSE, we would expect the movie to make exp(24.8) dollars. However, this interpretation is not relevant because there are variables like year and log_budget that would never be zero, particularly since we filtered out movies that were below a nonzero threshold for both these variables.
 
 -   For a one unit increase in the average score given to the movie, we would expect the revenue to multiply by 1.8, holding all other variables constant.
 
@@ -370,7 +368,7 @@ exp(-.002)-exp(-.013)
 
 -   For multi-genre movies, we would expect a one minute increase in runtime to multiply the revenue by .01 more than if the movie was single genre, holding all other variables constant.
 
-SAMIR TRAVERRSSSS - removing multi language; F test and see it is not significant; technically our final model
+### Linear Regression Assumptions
 
 ```{r}
 data_augmented <- augment(final_model)
@@ -399,13 +397,9 @@ data_augmented |>
 
 ```
 
-Our model meets the normality assumption. According to the Histogram of Residuals, we can see that the residuals are approximately normally distributed, following a bell-curve shape centered around 0. Our model does not meet the independence assumption because we cannot distinguish movie sequels or identify whether movies belong to the same company or franchise. This limitation could introduce bias into our data since viewers often tend to watch sequels or movies produced by the same company (e.g., Marvel movies), which creates a dependency between observations.
+Our model meets the normality assumption. According to the Histogram of Residuals, we can see that the residuals are approximately normally distributed, following a bell-curve shape centered around 0. Our model does not necessarily meet the independence assumption because we cannot confidently distinguish movie sequels or easily identify whether movies belong to the same company or franchise. This limitation could introduce bias into our data since viewers often tend to watch sequels, movies within franchises, or movies produced by the same company (e.g., Marvel movies have a certain audience that tend to watch all their movies to keep up with the franchise, contributing to the huge revenue they make), which could create a dependency between observations.
 
--   need to interpret coefficients for final model
-
-SAMIR TRAVERSSSSSSS - interpret all coefficients (remember it is log logged –\> gotta think)
-
-### Investigating Influential Points (IGNORE FOR NOW)
+### Investigating Influential Points
 
 ```{r}
 
