@@ -428,9 +428,29 @@ nooutliers <- movies |>
   mutate(ratio = log_revenue / log_budget) |>
   filter(ratio >= lower_outlier_ratio & ratio <= upper_outlier_ratio)
 
-
 ```
 
-We dove deeper into our potential influential points and began to look for a pattern in the data. After not finding anything to indicate that a certain genre, language, or runtime length may be causing some sort of abnormality, we looked to log_revenue and log_budget. Interestingly, we found that the ratio between log_revenue and log_budget tended to be much more extreme for our influential points as compared to the average of the entire data set (see calculations in appendix). As such, we looked at a few specific data points to see if there were potential issues; we found data entry errors were present. For instance, the movie *Kiss of the Spider Woman* has a reported budget of \$11, but according to the American Film Institute, the actual budget was north of \$1.5 million. When briefly looking at a few other data points, this was the case for multiple other movies with extreme log_revenue to log_budget ratios as well.
+We dove deeper into our potential influential points and began to look for a pattern in the data. After not finding anything to indicate that a certain genre, language, or runtime length may be causing some sort of abnormality, we looked to log_revenue and log_budget. Interestingly, we found that the ratio between log_revenue and log_budget tended to be much more extreme for our influential points as compared to the average of the entire data set. As such, we looked at a few specific data points to see if there were potential issues; we found data entry errors were present. For instance, the movie *Kiss of the Spider Woman* has a reported budget of \$11, but according to the American Film Institute, the actual budget was north of \$1.5 million. When briefly looking at a few other data points, this was the case for multiple other movies with extreme log_revenue to log_budget ratios as well.
 
-When fitting our final model based on the data without these points present, we saw that our $R^2$ value increased by nearly 4%. We believe this is more than enough evidence to suggest that our model does a better job of predicting movie revenue when movies with extreme log_revenue to log_budget ratios are not present in the data, because they are likely the result of data entry errors. It is important to note that ultimately, removing all these movies is not perfect, as it is entirely possible that a movie may have a very low budget and very high revenue, or vice versa.
+```{r}
+
+final_model_nooutliers <- lm(data = nooutliers, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
+
+tidy(final_model_nooutliers) |>
+  kable(digits = 3)
+
+data_augmented_nooutliers <- augment(final_model_nooutliers)
+
+ggplot(data = data_augmented_nooutliers, aes(x =.fitted, y = .std.resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", size = 1) +
+  labs(
+    title = "Standardized Residuals vs. Fitted Values",
+    x = "Fitted Values",
+    y = "Standardized Residuals"
+  )
+
+glance(final_model_nooutliers) |> select(r.squared, adj.r.squared, AIC, BIC)
+```
+
+When fitting our final model based on the data without these points present, we saw that our $R^2$ value increased by nearly 4%. Additionally, it appears that our constant variance condition is closer to being satisfied than in the previous model. We believe this is more than enough evidence to suggest that our model does a better job of predicting movie revenue when movies with extreme log_revenue to log_budget ratios are not present in the data, because they are likely the result of data entry errors. It is important to note that ultimately, removing all these movies is not perfect, as it is entirely possible that a movie may have a very low budget and very high revenue, or vice versa.
