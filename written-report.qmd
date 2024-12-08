@@ -35,15 +35,15 @@ Hypotheses: We hypothesize movies that have high popularity scores and ratings, 
 
 ## Data description
 
-The source of the dataset is taken from TMDb (The Movie Database), which is an online, public database for movies that contains information such as ratings, runtime, cast, director, and box office performance. We discovered this dataset on Kaggle, and it is updated daily by user asaniczka, who takes the data from TMDb [@asaniczka2023].
+The source of the data set is taken from TMDb (The Movie Database), which is an online, public database for movies that contains information such as ratings, runtime, cast, director, and box office performance. We discovered this data set on Kaggle, and it is updated daily by user asaniczka, who takes the data from TMDb [@asaniczka2023].
 
-There were 953629 observations in the original dataset, each representing a single film. There were 24 columns in this dataset, with some of the most important being the name (an identifier), release year, runtime, genres, rating, votes, and revenue.
+There were 953629 observations in the original data set, each representing a single film. There were 24 columns in this data set, with some of the most important being the name (an identifier), release year, runtime, genres, rating, votes, and revenue.
 
 ## Exploratory Data Analysis
 
-We filtered the original dataset outside of this project first because the original dataset of almost 1 million rows was far too large to be able to run efficiently in RStudio; as such, we filtered for where the movies had more than 100 votes, meaning more than 100 people submitted ratings for the movie. After filtering, there are now 18086 observations, and we were able to import this filtered dataset into Rstudio (The file name was "final_vote_filtered_movie_data.csv").
+We filtered the original data set outside of this project first because the original data set of almost 1 million rows was far too large to be able to run efficiently in RStudio; as such, we filtered for where the movies had more than 100 votes, meaning more than 100 people submitted ratings for the movie. After filtering, there are now 18086 observations, and we were able to import this filtered data set into Rstudio (The file name was "final_vote_filtered_movie_data.csv").
 
-We are going to transform the variables spoken_languages and genres. For spoken_languages, we want to make a categorical variable based on whether more than one language is spoken in the movie or not (True = more than one language, False = just one language). For genres, we want to take a similar approach to see whether the movie is tagged for more than one genre (True = more than one genre, False = just one genre). Additionally, we want to transform the month, date, year format of the release date to just be the year. Lastly, before we begin EDA and further analysis, we are going to remove all 0s in the revenue and budget columns because we are not able to accurately impute the values; we have evidence to suggest that the original author of the dataset just put 0s instead of NAs. 
+We are going to transform the variables spoken_languages and genres. For spoken_languages, we want to make a categorical variable based on whether more than one language is spoken in the movie or not (True = more than one language, False = just one language). For genres, we want to take a similar approach to see whether the movie is tagged for more than one genre (True = more than one genre, False = just one genre). Additionally, we want to transform the month, date, year format of the release date to just be the year. Lastly, before we begin EDA and further analysis, we are going to remove all 0s in the revenue and budget columns because we are not able to accurately impute the values; we have evidence to suggest that the original author of the data set just put 0s instead of NAs. 
 
 ```{r}
 #New column where TRUE for multiple languages, FALSE for 1 language
@@ -125,25 +125,16 @@ log(Revenue)",
 
 plot1rev+plot1logrev
 
-#Summary statistics 
-movies |>
-  summarise(min = min(revenue), 
-            q1 = quantile(revenue, 0.25), 
-            median = median(revenue), 
-            q3 = quantile(revenue, 0.75), 
-            max = max(revenue), 
-            mean = mean(revenue), 
-            sd = sd(revenue)) |>
-  kable(digits = 3)
 ```
 
-The distribution of revenue is strongly skewed to the right. The boxplot suggests that we have a significant amount of outliers. The median is \$30,099,904 and our interquartile range is \$86,123,799.
-
-Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and log(Revenue) has a median of 17.22 and an IQR of 2.43.
+The distribution of revenue is strongly skewed to the right. The boxplot suggests that we have a significant amount of outliers. The median is \$30,099,904 and our interquartile range is \$86,123,799. Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and log(Revenue) has a median of 17.22 and an IQR of 2.43. (Appendix Figure 1)
 
 ### Bivariate EDA
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
+
 # spoken languages
 
 languages_plot <- movies |>
@@ -177,6 +168,9 @@ Based on the box plots for the number of spoken languages in a movie, it seems t
 Based on the box plots for the number of genres a movie is tagged for, it also appears that whether the movie is grouped into one genre or multiple genres does not have much of an impact on the logged revenue. Again, this is evident based on the overlapping of the two box plots.
 
 ```{r}
+#| fig-width: 5
+#| fig-height: 2.2
+
 # budget
 
 budget_plot <- movies |>
@@ -210,42 +204,15 @@ movies <- movies |>
   mutate(log_budget = log(movies$budget))
 ```
 
-```{r}
-# year
-yearplot <- movies |>
-  ggplot(aes(x = year, y = log_revenue)) +
-  geom_point() + 
-  labs(
-    title = "Release Date vs. log(Revenue)",
-    x = "Year",
-    y = "log(Revenue)"
-  )
-yearplot
-```
-
-According to the graph comparing year and log(revenue), there is a positive, weak correlation. Movies with more recent years tend to have a slightly higher logged revenue, which makes sense in the context of inflation. There are many data points clustered between 1975 and 2023.
-
 ### Interaction
 
-First interaction we want to investigate is the genre and vote average. It is possible that the effect of vote_average on log(revenue) differs based on if it is a multi-genre movie or if the movie is only of a single genre.
+The main interaction we want to investigate is between the genre and runtime. It is possible that the effect of movie runtime on log(revenue) differs based on if it is a multi-genre movie or if the movie is only of a single genre.
 
 ```{r}
-movies |>
-  ggplot(aes(x = vote_average, y = log_revenue, color = multi_genre)) +
-  geom_point(alpha = 0.5) + 
-  geom_smooth(method = "lm", aes(group = multi_genre), se = FALSE) +
-  labs(
-    title = "Vote Average vs. log(Revenue) by multi_genre",
-    x = "Vote Average",
-    y = "log(Revenue)"
-  ) 
-```
+#| fig-width: 5
+#| fig-height: 2.2
 
-The slope of each line differs by a bit, so it is possible there is evidence of interaction, but further analysis is needed.
 
-Second interaction we want to investigate is the genre and runtime. It is possible that the effect of movie runtime on log(revenue) differs based on if it is a multi-genre movie or if the movie is only of a single genre.
-
-```{r}
 movies |>
   ggplot(aes(x = runtime, y = log_revenue, color = multi_genre)) +
   geom_point(alpha = 0.5) + 
@@ -257,7 +224,9 @@ movies |>
   ) 
 ```
 
-The slope of each seems to differ slightly, but it seems that the effect of runtime on log(Revenue) is marginally stronger for multi-genre movies. We intend to do further analysis later in this project to investigate these interaction effects as well as other interactions of interest.
+The slope of each seems to differ slightly, and it seems that the effect of runtime on log(Revenue) is marginally stronger for multi-genre movies. We intend to do further analysis later in this project to investigate these interaction effects as well as other interactions of interest.
+
+We additionally investigated the interaction between genre and vote average, however, the slopes of the lines appear to be very similar (Appendix Figure 3) . We will still do further analysis to ensure that the interaction is not useful in our final model, but we will likely not be using it.
 
 ## Methodology and Analysis
 
@@ -279,15 +248,7 @@ Based off of our output for the base model (no interaction terms), it looks as i
 
 We were also surprised that the year coefficent has a negative value, as that would imply that as the movie is more recent, the log(revenue) decreases, which is interesting. We are now interested in analyzing whether the added interaction terms are worth adding in the model to use as predictors of the log(revenue).
 
-### Multicollinearity Analysis
-
-Then, we will take care of the issue of multicollinearity by using the VIF to see which predictor variables could have correlation.
-
-```{r}
-vif(base_model)
-```
-
-Based off of our VIF function, it seems as if there are no variables that raise issues of multicollinearity because all of our variables have a VIF much lower than 10.
+We tested for multicollinearity by using VIF; all of our predictor variables have a VIF of less than 2. As such, it seems as if there are no variables that raise issues of multicollinearity (Appendix Figure 4).
 
 ### Investigating Multi-Genre/Runtime Interaction
 
@@ -409,7 +370,7 @@ stdresid <- data_augmented |>
   filter(.std.resid > 3 | .std.resid < -3) |>
   mutate(ratio = log_revenue / log_budget)
 
-# code to calculate ratio of log revenue to log budget for original movies dataset
+# code to calculate ratio of log revenue to log budget for original movies data set
 
 ratios <- movies |>
   mutate(ratio = log_revenue / log_budget) |>
@@ -467,3 +428,65 @@ When fitting our final model based on the data without these points present, we 
 Our goal for this project was to understand how to predict movie box office revenue using various elements. In the post-COVID world, we find this topic particularly interesting because of the drop in in-person movie viewership due to developments like streaming services, shifts in the entertainment industry, and more. This project sought to gain a deeper understanding of what truly drives a movie's success or failure in the box office.
 
 Based on our analysis, we can see that the most useful variables were the average vote a movie received, budget, runtime, year it was released, and whether or not the movie was categorized as having multiple genres.
+
+## Appendix
+
+\(1\)
+
+```{r}
+#| label: app-one
+
+#Summary statistics 
+movies |>
+  summarise(min = min(revenue), 
+            q1 = quantile(revenue, 0.25), 
+            median = median(revenue), 
+            q3 = quantile(revenue, 0.75), 
+            max = max(revenue), 
+            mean = mean(revenue), 
+            sd = sd(revenue)) |>
+  kable(digits = 3)
+```
+
+\(2\)
+
+```{r}
+#| label: app-two
+
+# year
+yearplot <- movies |>
+  ggplot(aes(x = year, y = log_revenue)) +
+  geom_point() + 
+  labs(
+    title = "Release Date vs. log(Revenue)",
+    x = "Year",
+    y = "log(Revenue)"
+  )
+yearplot
+```
+
+According to the graph comparing year and log(revenue), there is a positive, weak correlation. Movies with more recent years tend to have a slightly higher logged revenue, which makes sense in the context of inflation. There are many data points clustered between 1975 and 2023.
+
+\(3\)
+
+```{r}
+#| label: app-three
+
+movies |>
+  ggplot(aes(x = vote_average, y = log_revenue, color = multi_genre)) +
+  geom_point(alpha = 0.5) + 
+  geom_smooth(method = "lm", aes(group = multi_genre), se = FALSE) +
+  labs(
+    title = "Vote Average vs. log(Revenue) by multi_genre",
+    x = "Vote Average",
+    y = "log(Revenue)"
+  ) 
+```
+
+\(4\)
+
+```{r}
+#| label: app-four
+
+vif(base_model)
+```
