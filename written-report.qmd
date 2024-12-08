@@ -415,10 +415,11 @@ When fitting our final model based on the data without these points present, we 
 \end{align*}
 ```
 ## Conclusion
+Our goal for this project was to predict and understand movie box office revenue by examining various factors. In a post-COVID world, this topic feels particularly interesting because of how the entertainment industry has changed, with fewer people going to theaters due to the rise and advancement of streaming platforms, changes in viewer habits, and other trends. Through this project, we aimed to better understand what drives a movie's success or failure at the box office.
 
-Our goal for this project was to understand how to predict movie box office revenue using various elements. In the post-COVID world, we find this topic particularly interesting because of the drop in in-person movie viewership due to developments like streaming services, shifts in the entertainment industry, and more. This project sought to gain a deeper understanding of what truly drives a movie's success or failure in the box office.
+From our analysis, the most influential factors were the average audience rating (vote), budget, runtime, release year, and whether the movie was categorized as having multiple genres. These metrics provided meaningful insights into what contributes to a movie’s box office performance. However, it is also important to recognize what is missing from our data. For example, not all movies are competing at the box office. Streaming platforms like Netflix and Hulu offer viewers the convenience of watching from home, which has reshaped how success is defined in the film industry. Moreover, our dataset only focused on widely popular films, which means smaller, independent movies that did not achieve mainstream attention were excluded. This could have introduced potential bias in our results.
 
-Based on our analysis, we can see that the most useful variables were the average vote a movie received, budget, runtime, year it was released, and whether or not the movie was categorized as having multiple genres.
+Ultimately, understanding what influences box office revenue is a powerful tool for producers and studios. By focusing on factors like how well people like the movie, how much money is spent making it, and how many genres it covers, they can make more informed decisions during production. At the same time, they should stay mindful of emerging trends in the entertainment industry, like streaming services, that continue to reshape what makes a movie successful. Overall, with success no longer defined solely by ticket sales, producers can explore new ways to measure and achieve it.
 
 ## Appendix
 
