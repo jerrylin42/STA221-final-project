@@ -8,6 +8,9 @@ execute:
   message: false
   echo: false
 editor: visual
+fontsize: 10pt
+fig-width: 5
+fig-height: 2.2
 ---
 
 ```{r}
@@ -19,6 +22,7 @@ library(readr)
 library(dplyr)
 library(patchwork)
 library(rms)
+library(kableExtra)
 
 movies <- read_csv("data/final_vote_filtered_movie_data.csv")
 ```
@@ -284,8 +288,7 @@ Our output also continues to prove that multi_language is not a useful predictor
 
 ### Final Variables and Data Entry Errors
 
-Therefore, below we have decided on the follow variables for our final model:
-
+Therefore, below we have decided on the following variables for our final model:
 
 ```{=tex}
 \begin{align*}
@@ -294,9 +297,9 @@ Therefore, below we have decided on the follow variables for our final model:
 &\quad + \beta_5 \cdot \text{multigenreTRUE} + \beta_6 \cdot \text{runtime} :\text{multigenreTRUE} + \epsilon
 \end{align*}
 ```
-As we were testing this model and checking assumptions, we noticed some concerning evidence of data entry errors. We dove deeper into our points that had high standardized residuals and began to look for a pattern in the data. After not finding anything to indicate that a certain genre, language, or runtime length may be causing some sort of abnormality, we looked to log_revenue and log_budget. Interestingly, we found that the ratio between log_revenue and log_budget tended to be much more extreme for our influential points as compared to the average of the entire data set. As such, we looked at a few specific data points to see if there were potential issues; we found data entry errors were present. For instance, the movie *Kiss of the Spider Woman* has a reported budget of \$11, but according to the American Film Institute, the actual budget was north of \$1.5 million. When briefly looking at a few other data points, this was the case for multiple other movies with extreme log_revenue to log_budget ratios as well.
+As we were testing this model and checking assumptions, we noticed some concerning evidence of data entry errors. We dove deeper into points that had high standardized residuals and began to look for a pattern in the data. After not finding anything to indicate that a certain genre, language, or runtime length may be causing some sort of abnormality, we looked to log_revenue and log_budget. Interestingly, we found that the ratio between log_revenue and log_budget tended to be much more extreme for points with high standardized residuals, as compared to the average of the entire data set. As such, we looked at a few specific data points to see if there were potential issues; we found data entry errors were present. For instance, the movie *Kiss of the Spider Woman* has a reported budget of \$11, but according to the American Film Institute, the actual budget was north of \$1.5 million. When briefly looking at a few other data points, this was the case for multiple other movies with extreme log_revenue to log_budget ratios as well.
 
-As such, we decided to remove these points and create a new data set for our final model. We checked linear regression assumptions for the data set without these points, which can be found in the appendix (Appendix Figures 8 and 9).
+As such, we decided to remove these points and create a new data set for our final model. In total, 61 movies were removed. We checked linear regression assumptions for the data set without these points, which can be found in the appendix (Appendix Figures 8 and 9). The key difference is that constant variance was not satisfied before, but it appears to be mostly satisfied now.
 
 ```{r}
 
@@ -346,7 +349,7 @@ ggplot(data = data_augmented_nooutliers, aes(x =.fitted, y = .std.resid)) +
   )
 ```
 
-The constant variance condition appears to be almost satisfied, and the plot less skewed than the constant variance plot for the model with obvious data entry errors present (Appendix Figure 8).
+The constant variance condition appears to be mostly satisfied, and the plot is much less skewed than the constant variance plot for the model with obvious data entry errors present (Appendix Figure 8). Our model meets the linearity assumption because we cannot predict with strong accuracy if a residual will be positive or negative.
 
 ```{r}
 data_augmented_nooutliers |> 
@@ -360,11 +363,13 @@ data_augmented_nooutliers |>
 
 ```
 
-Additionally, our model meets the normality assumption. According to the Histogram of Residuals, we can see that the residuals are approximately normally distributed, following a bell-curve shape centered around 0. Our model does not necessarily meet the independence assumption because we cannot confidently distinguish movie sequels or easily identify whether movies belong to the same company or franchise. This limitation could introduce bias into our data since viewers often tend to watch sequels, movies within franchises, or movies produced by the same company (e.g., Marvel movies have a certain audience that tend to watch all their movies to keep up with the franchise, contributing to the huge revenue they make), which could create a dependency between observations.
+Additionally, our model meets the normality assumption. According to the histogram of residuals, we can see that the residuals are approximately normally distributed, following a bell-curve shape centered around 0. Our model does not necessarily meet the independence assumption because we cannot confidently distinguish movie sequels or easily identify whether movies belong to the same company or franchise. This limitation could introduce bias into our data since viewers often tend to watch sequels, movies within franchises, or movies produced by the same company (e.g., Marvel movies have a certain audience that tend to watch all their movies to keep up with the franchise, contributing to the huge revenue they make), which could create a dependency between observations.
+
+As a whole, we conclude that our model meets the linearity, constant variance, and normality requirements, but fails to meet the assumption of independence in a few limited cases.
 
 ## Results
 
-## Final Model
+### Final Model
 
 ```{r}
 tidy(final_model_nooutliers) |>
@@ -373,30 +378,6 @@ tidy(final_model_nooutliers) |>
 glance(final_model_nooutliers) |> select(r.squared, adj.r.squared, AIC, BIC)
 ```
 
-When fitting our final model based on the data without the likely data entry error points present, we saw that our $R^2$ value increased by nearly 4%. Additionally, it appears that our constant variance condition is closer to being satisfied than in the previous model. We believe this is more than enough evidence to suggest that our model does a better job of predicting movie revenue when movies with extreme log_revenue to log_budget ratios are not present in the data, because they are likely the result of data entry errors. It is important to note that ultimately, removing all these movies is not perfect, as it is entirely possible that a movie may have a very low budget and very high revenue, or vice versa.
-
-\^\^ THIS NEEDS TO BE ADJUSTTED TO REMOVE CONSTANT VARIANCE, ETC.
-
-\>\> BELOW, NEED TO MAKE SURE THIS FITS FINAL MODEL DATA
-
-The p-values for every coefficient are near-zero, suggesting that all these coefficients are statistically significant for predicting the log(revenue).
-
--   When vote_average is 0, budget is 1, runtime is 0, year is 0, multi_genre is FALSE, we would expect the movie to make exp(24.8) dollars. However, this interpretation is not relevant because there are variables like year and log_budget that would never be zero, particularly since we filtered out movies that were below a nonzero threshold for both these variables.
-
--   For a one unit increase in the average score given to the movie, we would expect the revenue to multiply by 1.8, holding all other variables constant.
-
--   For a 10 percent increase in budget, we would expect the revenue to multiply by 1.09, holding all other variables constant.
-
--   For a one minute increase in runtime, we would expect the revenue to multiply by .99, holding all other variables constant.
-
--   For a one year increase in production year, we would expect the revenue to multiply by .99, holding all other variables constant.
-
--   We would expect a movie with more than genre to make .3 times the revenue of a single genre movie, if all other variables were the same.
-
--   For multi-genre movies, we would expect a one minute increase in runtime to multiply the revenue by .01 more than if the movie was single genre, holding all other variables constant.
-
-FINAL MODEL
-
 ```{=tex}
 \begin{align*}
 \widehat{\log(\text{revenue})} &= 24.689 + 0.607 \cdot \text{voteaverage} + 0.973 \cdot \log(\text{budget}) \\
@@ -404,13 +385,33 @@ FINAL MODEL
 &\quad - 1.075 \cdot \text{multigenreTRUE} + 0.010 \cdot \text{runtime}:\text{multigenreTRUE}
 \end{align*}
 ```
+When fitting our final model based on the data without the likely data entry error points present, we saw that our $R^2$ value increased by over 4% (from 46.556% to 50.650%). In terms of the BIC, this model experienced a nearly 1500 point decrease from the model using the data set with potential entry errors. We believe this is more than enough evidence to suggest that our model does a better job of predicting movie revenue when movies with extreme log_revenue to log_budget ratios are not present in the data, because they are likely the result of data entry errors. It is important to note that ultimately, removing all these movies is not perfect, as it is entirely possible that a movie may have a very low budget and very high revenue, or vice versa.
+
+The p-values for every coefficient are near-zero, suggesting that all these coefficients are statistically significant for predicting the log(revenue).
+
+-   When vote_average is 0, budget is 1, runtime is 0, year is 0, multi_genre is FALSE, we would expect the movie to make exp(24.689) dollars. However, this interpretation is not relevant because there are variables like year and log_budget that would never be zero, particularly since we filtered out movies that were below a nonzero threshold for both these variables.
+
+-   For a one point increase in the average score given to the movie, we would expect the revenue to multiply by a factor of 1.835, holding all other variables constant.
+
+-   For a 10 percent increase in budget, we would expect the revenue to multiply by 1.09, holding all other variables constant.
+
+-   For a one minute increase in runtime, we would expect the revenue to multiply by .99, holding all other variables constant.
+
+-   For a one year increase in production year, we would expect the revenue to multiply by .99, holding all other variables constant.
+
+-   We would expect a movie with more than one genre to make .341 times the revenue of a single genre movie, holding all else constant.
+
+-   For multi-genre movies, we would expect a one minute increase in runtime to multiply the revenue by .01 more than if the movie was single genre, holding all other variables constant.
+
 ## Conclusion
 
 Our goal for this project was to predict and understand movie box office revenue by examining various factors. In a post-COVID world, this topic feels particularly interesting because of how the entertainment industry has changed, with fewer people going to theaters due to the rise and advancement of streaming platforms, changes in viewer habits, and other trends. Through this project, we aimed to better understand what drives a movie's success or failure at the box office.
 
-From our analysis, the most influential factors were the average audience rating (vote), budget, runtime, release year, and whether the movie was categorized as having multiple genres. These metrics provided meaningful insights into what contributes to a movie’s box office performance. However, it is also important to recognize what is missing from our data. For example, not all movies are competing at the box office. Streaming platforms like Netflix and Hulu offer viewers the convenience of watching from home, which has reshaped how success is defined in the film industry. Moreover, our dataset only focused on widely popular films, which means smaller, independent movies that did not achieve mainstream attention were excluded. This could have introduced potential bias in our results.
+From our analysis, the most influential factors were the average audience rating (vote), budget, runtime, release year, and whether the movie was categorized as having multiple genres. These metrics provided meaningful insights into what contributes to a movie’s box office performance. However, it is also important to recognize what is missing from our data. For example, not all movies are competing at the box office. Streaming platforms like Netflix and Hulu offer viewers the convenience of watching from home, which has reshaped how success is defined in the film industry. Moreover, our data set only focused on widely popular films, which means smaller, independent movies that did not achieve mainstream attention were excluded. This could have introduced potential bias in our results. Additionally, by removing points with extreme revenue to budget ratios in order to reduce the influence of data entry errors on our final model, we potentially got rid of valid data points as well.
 
-Ultimately, understanding what influences box office revenue is a powerful tool for producers and studios. By focusing on factors like how well people like the movie, how much money is spent making it, and how many genres it covers, they can make more informed decisions during production. At the same time, they should stay mindful of emerging trends in the entertainment industry, like streaming services, that continue to reshape what makes a movie successful. Overall, with success no longer defined solely by ticket sales, producers can explore new ways to measure and achieve it.
+Ultimately, understanding what influences box office revenue is a powerful tool for producers and studios. By focusing on factors like how well people like the movie, how much money is spent making it, and how many genres it covers, producers can make more informed decisions during production. At the same time, they should stay mindful of emerging trends in the entertainment industry, like streaming services, that continue to reshape what makes a movie successful. Overall, with success no longer defined solely by ticket sales, producers can explore new ways to measure and achieve it.
+
+\newpage
 
 ## Appendix
 
@@ -528,7 +529,7 @@ ggplot(data = data_augmented, aes(x =.fitted, y = .std.resid)) +
   )
 ```
 
-Our model does not satisfy the constant variance assumption, which indicates that the variability in our data could be improved. In the scatter plot of Standardized Residuals vs. Fitted Values, the points are not randomly or evenly distributed around the red line. Specifically, there are outliers that are noticeable near the top left, and many points are densely clustered below the red line on the right side of the plot. Our model meets the linearity assumption because we cannot predict with strong accuracy if a residual will be positive or negative.
+Our model does not satisfy the constant variance assumption, which indicates that the variability in our data could be improved. In the scatter plot of Standardized Residuals vs. Fitted Values, the points are not randomly or evenly distributed around the red line. Specifically, there are outliers that are noticeable near the top left, and many points are densely clustered below the red line on the right side of the plot.
 
 \(9\)
 
