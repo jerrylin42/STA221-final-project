@@ -270,7 +270,7 @@ kable(anova(base_model, interaction_genreruntime), format = "markdown", digits =
 
 When adding the interaction effect between multi_genre and runtime to our model, our results differ from the base model in that, now, adding multi_genre as a predictor does seem to be useful and, additionally, the interaction between multi_genre and runtime is also statistically significant (both indicated by p-values of nearly 0). Still, we see evidence to suggest that multi_language may not be a useful predictor.
 
-In effect, when running a nested F-test, our output shows that the more complex model, which includes the interaction effect between multi_genre and runtime, does a significantly better job of predicting movie revenue than the base model which does not contain it—this is again indicated by a resulting p-value of nearly 0. Additionally, using model comparison diagnostics, we see that the new model (including interaction effect) has a slightly higher adjusted $R^2$ value of 46.56% as compared to the base model's adjusted $R^2$ of 46.45%. Similarly, the new model's BIC drops by nearly 7 points (from 26356.40 to 26349.53), suggesting an improvement. We are focused on using BIC because it penalizes more harshly for additional parameters than AIC, so it will allow us to find the model which best fits our data.
+When running a nested F-test, our output shows that the more complex model, which includes the interaction effect between multi_genre and runtime, does a significantly better job of predicting movie revenue than the base model which does not contain it—this is again indicated by a resulting p-value of nearly 0. Additionally, using model comparison diagnostics, we see that the new model (including interaction effect) has a slightly higher adjusted $R^2$ value of 46.56% as compared to the base model's adjusted $R^2$ of 46.45%. Similarly, the new model's BIC drops by nearly 7 points (from 26356.40 to 26349.53), suggesting an improvement. We are focused on using BIC because it penalizes more harshly for additional parameters than AIC, so it will allow us to find the model which best fits our data.
 
 In effect, we will add the interaction effect between multi_genre and runtime to our final model. We now look to see if the other interaction effect we are interested in, multi_genre and vote_average, will be a useful additional predictor.
 
@@ -284,7 +284,7 @@ Our output also continues to prove that multi_language is not a useful predictor
 
 ## Results
 
-Therefore, below is our final model we decide to use:
+Therefore, below is our final model framework we decide to use:
 
 ```{=tex}
 \begin{align*}
@@ -293,32 +293,6 @@ Therefore, below is our final model we decide to use:
 &\quad + \beta_5 \cdot \text{multigenreTRUE} + \beta_6 \cdot \text{runtime} :\text{multigenreTRUE} + \epsilon
 \end{align*}
 ```
-```{r}
-#Final model
-final_model <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
-
-tidy(final_model) |>
-  kable(digits = 3)
-
-glance(final_model) |> select(r.squared, adj.r.squared, AIC, BIC)
-
-```
-
-The p-values for every coefficient are near-zero, suggesting that all these coefficients are statistically significant for predicting the log(revenue).
-
--   When vote_average is 0, budget is 1, runtime is 0, year is 0, multi_genre is FALSE, we would expect the movie to make exp(24.8) dollars. However, this interpretation is not relevant because there are variables like year and log_budget that would never be zero, particularly since we filtered out movies that were below a nonzero threshold for both these variables.
-
--   For a one unit increase in the average score given to the movie, we would expect the revenue to multiply by 1.8, holding all other variables constant.
-
--   For a 10 percent increase in budget, we would expect the revenue to multiply by 1.09, holding all other variables constant.
-
--   For a one minute increase in runtime, we would expect the revenue to multiply by .99, holding all other variables constant.
-
--   For a one year increase in production year, we would expect the revenue to multiply by .99, holding all other variables constant.
-
--   We would expect a movie with more than genre to make .3 times the revenue of a single genre movie, if all other variables were the same.
-
--   For multi-genre movies, we would expect a one minute increase in runtime to multiply the revenue by .01 more than if the movie was single genre, holding all other variables constant.
 
 ### Linear Regression Assumptions
 
@@ -406,6 +380,22 @@ glance(final_model_nooutliers) |> select(r.squared, adj.r.squared, AIC, BIC)
 ```
 
 When fitting our final model based on the data without these points present, we saw that our $R^2$ value increased by nearly 4%. Additionally, it appears that our constant variance condition is closer to being satisfied than in the previous model. We believe this is more than enough evidence to suggest that our model does a better job of predicting movie revenue when movies with extreme log_revenue to log_budget ratios are not present in the data, because they are likely the result of data entry errors. It is important to note that ultimately, removing all these movies is not perfect, as it is entirely possible that a movie may have a very low budget and very high revenue, or vice versa.
+
+The p-values for every coefficient are near-zero, suggesting that all these coefficients are statistically significant for predicting the log(revenue).
+
+-   When vote_average is 0, budget is 1, runtime is 0, year is 0, multi_genre is FALSE, we would expect the movie to make exp(24.8) dollars. However, this interpretation is not relevant because there are variables like year and log_budget that would never be zero, particularly since we filtered out movies that were below a nonzero threshold for both these variables.
+
+-   For a one unit increase in the average score given to the movie, we would expect the revenue to multiply by 1.8, holding all other variables constant.
+
+-   For a 10 percent increase in budget, we would expect the revenue to multiply by 1.09, holding all other variables constant.
+
+-   For a one minute increase in runtime, we would expect the revenue to multiply by .99, holding all other variables constant.
+
+-   For a one year increase in production year, we would expect the revenue to multiply by .99, holding all other variables constant.
+
+-   We would expect a movie with more than genre to make .3 times the revenue of a single genre movie, if all other variables were the same.
+
+-   For multi-genre movies, we would expect a one minute increase in runtime to multiply the revenue by .01 more than if the movie was single genre, holding all other variables constant.
 
 ```{=tex}
 \begin{align*}
