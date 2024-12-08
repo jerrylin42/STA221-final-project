@@ -70,7 +70,7 @@ movies <- movies |>
   drop_na(multi_language)
 ```
 
-## Analysis Approach
+### Analysis Approach
 
 Variables of interest:
 
@@ -95,7 +95,7 @@ movies <- movies |>
   mutate(log_revenue = log(movies$revenue))
 ```
 
-## Univariate EDA
+### Univariate EDA
 
 ```{r}
 #| fig-width: 5
@@ -141,7 +141,7 @@ The distribution of revenue is strongly skewed to the right. The boxplot suggest
 
 Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and log(Revenue) has a median of 17.22 and an IQR of 2.43.
 
-## Bivariate EDA
+### Bivariate EDA
 
 ```{r}
 # spoken languages
@@ -225,7 +225,7 @@ yearplot
 
 According to the graph comparing year and log(revenue), there is a positive, weak correlation. Movies with more recent years tend to have a slightly higher logged revenue, which makes sense in the context of inflation. There are many data points clustered between 1975 and 2023.
 
-## Interaction
+### Interaction
 
 First interaction we want to investigate is the genre and vote average. It is possible that the effect of vote_average on log(revenue) differs based on if it is a multi-genre movie or if the movie is only of a single genre.
 
@@ -454,3 +454,16 @@ glance(final_model_nooutliers) |> select(r.squared, adj.r.squared, AIC, BIC)
 ```
 
 When fitting our final model based on the data without these points present, we saw that our $R^2$ value increased by nearly 4%. Additionally, it appears that our constant variance condition is closer to being satisfied than in the previous model. We believe this is more than enough evidence to suggest that our model does a better job of predicting movie revenue when movies with extreme log_revenue to log_budget ratios are not present in the data, because they are likely the result of data entry errors. It is important to note that ultimately, removing all these movies is not perfect, as it is entirely possible that a movie may have a very low budget and very high revenue, or vice versa.
+
+```{=tex}
+\begin{align*}
+\widehat{\log(\text{revenue})} &= 24.689 + 0.607 \cdot \text{voteaverage} + 0.973 \cdot \log(\text{budget}) \\
+&\quad - 0.013 \cdot \text{runtime} - 0.013 \cdot \text{year} \\
+&\quad - 1.075 \cdot \text{multigenreTRUE} + 0.010 \cdot \text{runtime}:\text{multigenreTRUE}
+\end{align*}
+```
+## Conclusion
+
+Our goal for this project was to understand how to predict movie box office revenue using various elements. In the post-COVID world, we find this topic particularly interesting because of the drop in in-person movie viewership due to developments like streaming services, shifts in the entertainment industry, and more. This project sought to gain a deeper understanding of what truly drives a movie's success or failure in the box office.
+
+Based on our analysis, we can see that the most useful variables were the average vote a movie received, budget, runtime, year it was released, and whether or not the movie was categorized as having multiple genres.
