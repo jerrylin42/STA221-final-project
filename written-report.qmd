@@ -282,9 +282,10 @@ From the F-test results alone, we have strong evidence to suggest that adding th
 
 Our output also continues to prove that multi_language is not a useful predictor variable, so we will remove it from future consideration; also, we will not put the interaction between multi_genre and vote_average in our final model.
 
-## Results
+### Final Variables and Data Entry Errors
 
-Therefore, below is our final model framework we decide to use:
+Therefore, below we have decided on the follow variables for our final model:
+
 
 ```{=tex}
 \begin{align*}
@@ -293,67 +294,15 @@ Therefore, below is our final model framework we decide to use:
 &\quad + \beta_5 \cdot \text{multigenreTRUE} + \beta_6 \cdot \text{runtime} :\text{multigenreTRUE} + \epsilon
 \end{align*}
 ```
+As we were testing this model and checking assumptions, we noticed some concerning evidence of data entry errors. We dove deeper into our points that had high standardized residuals and began to look for a pattern in the data. After not finding anything to indicate that a certain genre, language, or runtime length may be causing some sort of abnormality, we looked to log_revenue and log_budget. Interestingly, we found that the ratio between log_revenue and log_budget tended to be much more extreme for our influential points as compared to the average of the entire data set. As such, we looked at a few specific data points to see if there were potential issues; we found data entry errors were present. For instance, the movie *Kiss of the Spider Woman* has a reported budget of \$11, but according to the American Film Institute, the actual budget was north of \$1.5 million. When briefly looking at a few other data points, this was the case for multiple other movies with extreme log_revenue to log_budget ratios as well.
+
+As such, we decided to remove these points and create a new data set for our final model. We checked linear regression assumptions for the data set without these points, which can be found in the appendix (Appendix Figures 8 and 9).
+
 ```{r}
-#Final model
+
 final_model <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
 
-tidy(final_model) |>
-  kable(digits = 3)
-
-glance(final_model) |> select(r.squared, adj.r.squared, AIC, BIC)
-
-```
-
-The p-values for every coefficient are near-zero, suggesting that all these coefficients are statistically significant for predicting the log(revenue).
-
--   When vote_average is 0, budget is 1, runtime is 0, year is 0, multi_genre is FALSE, we would expect the movie to make exp(24.8) dollars. However, this interpretation is not relevant because there are variables like year and log_budget that would never be zero, particularly since we filtered out movies that were below a nonzero threshold for both these variables.
-
--   For a one unit increase in the average score given to the movie, we would expect the revenue to multiply by 1.8, holding all other variables constant.
-
--   For a 10 percent increase in budget, we would expect the revenue to multiply by 1.09, holding all other variables constant.
-
--   For a one minute increase in runtime, we would expect the revenue to multiply by .99, holding all other variables constant.
-
--   For a one year increase in production year, we would expect the revenue to multiply by .99, holding all other variables constant.
-
--   We would expect a movie with more than genre to make .3 times the revenue of a single genre movie, if all other variables were the same.
-
--   For multi-genre movies, we would expect a one minute increase in runtime to multiply the revenue by .01 more than if the movie was single genre, holding all other variables constant.
-
-### Linear Regression Assumptions
-
-```{r}
 data_augmented <- augment(final_model)
-
-ggplot(data = data_augmented, aes(x =.fitted, y = .std.resid)) +
-  geom_point() +
-  geom_hline(yintercept = 0, color = "red", size = 1) +
-  labs(
-    title = "Standardized Residuals vs. Fitted Values",
-    x = "Fitted Values",
-    y = "Standardized Residuals"
-  )
-```
-
-Our model does not satisfy the constant variance assumption, which indicates that the variability in our data could be improved. In the scatter plot of Standardized Residuals vs. Fitted Values, the points are not randomly or evenly distributed around the red line. Specifically, there are outliers that are noticeable near the top left, and many points are densely clustered below the red line on the right side of the plot. Our model meets the linearity assumption because we cannot predict with strong accuracy if a residual will be positive or negative.
-
-```{r}
-data_augmented |> 
-  ggplot(aes(x = .resid)) +
-  geom_histogram() +
-  labs(
-    title = "Histogram of Residuals",
-    x = "Residuals",
-    y = "Count"
-  )
-
-```
-
-Our model meets the normality assumption. According to the Histogram of Residuals, we can see that the residuals are approximately normally distributed, following a bell-curve shape centered around 0. Our model does not necessarily meet the independence assumption because we cannot confidently distinguish movie sequels or easily identify whether movies belong to the same company or franchise. This limitation could introduce bias into our data since viewers often tend to watch sequels, movies within franchises, or movies produced by the same company (e.g., Marvel movies have a certain audience that tend to watch all their movies to keep up with the franchise, contributing to the huge revenue they make), which could create a dependency between observations.
-
-### Investigating Influential Points
-
-```{r}
 
 # we noticed that a lot of the potential "influential points" (based on .std.resid < 3 or > 3) tend to have very different log revenue vs. log budget values
 
@@ -379,17 +328,11 @@ upper_outlier_ratio <-  1.03 + (0.1356893 * 3)
 nooutliers <- movies |>
   mutate(ratio = log_revenue / log_budget) |>
   filter(ratio >= lower_outlier_ratio & ratio <= upper_outlier_ratio)
-
 ```
-
-We dove deeper into our potential influential points and began to look for a pattern in the data. After not finding anything to indicate that a certain genre, language, or runtime length may be causing some sort of abnormality, we looked to log_revenue and log_budget. Interestingly, we found that the ratio between log_revenue and log_budget tended to be much more extreme for our influential points as compared to the average of the entire data set. As such, we looked at a few specific data points to see if there were potential issues; we found data entry errors were present. For instance, the movie *Kiss of the Spider Woman* has a reported budget of \$11, but according to the American Film Institute, the actual budget was north of \$1.5 million. When briefly looking at a few other data points, this was the case for multiple other movies with extreme log_revenue to log_budget ratios as well.
 
 ```{r}
 
 final_model_nooutliers <- lm(data = nooutliers, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
-
-tidy(final_model_nooutliers) |>
-  kable(digits = 3)
 
 data_augmented_nooutliers <- augment(final_model_nooutliers)
 
@@ -401,11 +344,58 @@ ggplot(data = data_augmented_nooutliers, aes(x =.fitted, y = .std.resid)) +
     x = "Fitted Values",
     y = "Standardized Residuals"
   )
+```
+
+The constant variance condition appears to be almost satisfied, and the plot less skewed than the constant variance plot for the model with obvious data entry errors present (Appendix Figure 8).
+
+```{r}
+data_augmented_nooutliers |> 
+  ggplot(aes(x = .resid)) +
+  geom_histogram() +
+  labs(
+    title = "Histogram of Residuals",
+    x = "Residuals",
+    y = "Count"
+  )
+
+```
+
+Additionally, our model meets the normality assumption. According to the Histogram of Residuals, we can see that the residuals are approximately normally distributed, following a bell-curve shape centered around 0. Our model does not necessarily meet the independence assumption because we cannot confidently distinguish movie sequels or easily identify whether movies belong to the same company or franchise. This limitation could introduce bias into our data since viewers often tend to watch sequels, movies within franchises, or movies produced by the same company (e.g., Marvel movies have a certain audience that tend to watch all their movies to keep up with the franchise, contributing to the huge revenue they make), which could create a dependency between observations.
+
+## Results
+
+## Final Model
+
+```{r}
+tidy(final_model_nooutliers) |>
+  kable(digits = 3)
 
 glance(final_model_nooutliers) |> select(r.squared, adj.r.squared, AIC, BIC)
 ```
 
-When fitting our final model based on the data without these points present, we saw that our $R^2$ value increased by nearly 4%. Additionally, it appears that our constant variance condition is closer to being satisfied than in the previous model. We believe this is more than enough evidence to suggest that our model does a better job of predicting movie revenue when movies with extreme log_revenue to log_budget ratios are not present in the data, because they are likely the result of data entry errors. It is important to note that ultimately, removing all these movies is not perfect, as it is entirely possible that a movie may have a very low budget and very high revenue, or vice versa.
+When fitting our final model based on the data without the likely data entry error points present, we saw that our $R^2$ value increased by nearly 4%. Additionally, it appears that our constant variance condition is closer to being satisfied than in the previous model. We believe this is more than enough evidence to suggest that our model does a better job of predicting movie revenue when movies with extreme log_revenue to log_budget ratios are not present in the data, because they are likely the result of data entry errors. It is important to note that ultimately, removing all these movies is not perfect, as it is entirely possible that a movie may have a very low budget and very high revenue, or vice versa.
+
+\^\^ THIS NEEDS TO BE ADJUSTTED TO REMOVE CONSTANT VARIANCE, ETC.
+
+\>\> BELOW, NEED TO MAKE SURE THIS FITS FINAL MODEL DATA
+
+The p-values for every coefficient are near-zero, suggesting that all these coefficients are statistically significant for predicting the log(revenue).
+
+-   When vote_average is 0, budget is 1, runtime is 0, year is 0, multi_genre is FALSE, we would expect the movie to make exp(24.8) dollars. However, this interpretation is not relevant because there are variables like year and log_budget that would never be zero, particularly since we filtered out movies that were below a nonzero threshold for both these variables.
+
+-   For a one unit increase in the average score given to the movie, we would expect the revenue to multiply by 1.8, holding all other variables constant.
+
+-   For a 10 percent increase in budget, we would expect the revenue to multiply by 1.09, holding all other variables constant.
+
+-   For a one minute increase in runtime, we would expect the revenue to multiply by .99, holding all other variables constant.
+
+-   For a one year increase in production year, we would expect the revenue to multiply by .99, holding all other variables constant.
+
+-   We would expect a movie with more than genre to make .3 times the revenue of a single genre movie, if all other variables were the same.
+
+-   For multi-genre movies, we would expect a one minute increase in runtime to multiply the revenue by .01 more than if the movie was single genre, holding all other variables constant.
+
+FINAL MODEL
 
 ```{=tex}
 \begin{align*}
@@ -415,6 +405,7 @@ When fitting our final model based on the data without these points present, we 
 \end{align*}
 ```
 ## Conclusion
+
 Our goal for this project was to predict and understand movie box office revenue by examining various factors. In a post-COVID world, this topic feels particularly interesting because of how the entertainment industry has changed, with fewer people going to theaters due to the rise and advancement of streaming platforms, changes in viewer habits, and other trends. Through this project, we aimed to better understand what drives a movie's success or failure at the box office.
 
 From our analysis, the most influential factors were the average audience rating (vote), budget, runtime, release year, and whether the movie was categorized as having multiple genres. These metrics provided meaningful insights into what contributes to a movie’s box office performance. However, it is also important to recognize what is missing from our data. For example, not all movies are competing at the box office. Streaming platforms like Netflix and Hulu offer viewers the convenience of watching from home, which has reshaped how success is defined in the film industry. Moreover, our dataset only focused on widely popular films, which means smaller, independent movies that did not achieve mainstream attention were excluded. This could have introduced potential bias in our results.
@@ -505,3 +496,53 @@ glance(interaction_genre_run_vote) |> select(r.squared, adj.r.squared, AIC, BIC)
 
 kable(anova(interaction_genreruntime, interaction_genre_run_vote), format = "markdown", digits = 3)
 ```
+
+\(7\)
+
+```{r}
+#| label: app-seven
+
+#Final model
+final_model <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
+
+tidy(final_model) |>
+  kable(digits = 3)
+
+glance(final_model) |> select(r.squared, adj.r.squared, AIC, BIC)
+
+```
+
+\(8\)
+
+```{r}
+#| label: app-eight
+data_augmented <- augment(final_model)
+
+ggplot(data = data_augmented, aes(x =.fitted, y = .std.resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", size = 1) +
+  labs(
+    title = "Standardized Residuals vs. Fitted Values",
+    x = "Fitted Values",
+    y = "Standardized Residuals"
+  )
+```
+
+Our model does not satisfy the constant variance assumption, which indicates that the variability in our data could be improved. In the scatter plot of Standardized Residuals vs. Fitted Values, the points are not randomly or evenly distributed around the red line. Specifically, there are outliers that are noticeable near the top left, and many points are densely clustered below the red line on the right side of the plot. Our model meets the linearity assumption because we cannot predict with strong accuracy if a residual will be positive or negative.
+
+\(9\)
+
+```{r}
+#| label: app-nine
+data_augmented |> 
+  ggplot(aes(x = .resid)) +
+  geom_histogram() +
+  labs(
+    title = "Histogram of Residuals",
+    x = "Residuals",
+    y = "Count"
+  )
+
+```
+
+Our model meets the normality assumption. According to the Histogram of Residuals, we can see that the residuals are approximately normally distributed, following a bell-curve shape centered around 0. Our model does not necessarily meet the independence assumption because we cannot confidently distinguish movie sequels or easily identify whether movies belong to the same company or franchise. This limitation could introduce bias into our data since viewers often tend to watch sequels, movies within franchises, or movies produced by the same company (e.g., Marvel movies have a certain audience that tend to watch all their movies to keep up with the franchise, contributing to the huge revenue they make), which could create a dependency between observations.
