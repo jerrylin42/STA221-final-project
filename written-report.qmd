@@ -127,7 +127,7 @@ plot1rev+plot1logrev
 
 ```
 
-The distribution of revenue is strongly skewed to the right. The boxplot suggests that we have a significant amount of outliers. The median is \$30,099,904 and our interquartile range is \$86,123,799. Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and log(Revenue) has a median of 17.22 and an IQR of 2.43. (Appendix Figure 1)
+The distribution of revenue is strongly skewed to the right. The boxplot suggests that we have a significant amount of outliers. The median is \$30,099,904 and our interquartile range is \$86,123,799. Following a log transformation, our response variable, logged revenue, has a slight left skew but is unimodal and very roughly normal. It has a significant number of outliers on the left side, and log(Revenue) has a median of 17.22 and an IQR of 2.43 (Appendix Figure 1).
 
 ### Bivariate EDA
 
@@ -276,25 +276,9 @@ In effect, we will add the interaction effect between multi_genre and runtime to
 
 ### Investigating Multi-Genre/Vote Average Interaction
 
-Since we already added the multi_genre and runtime interaction, we will now test the model with BOTH interaction terms against the model with ONLY the multi_genre and runtime interaction.
+Since we already added the multi_genre and runtime interaction, we now test the model with BOTH interaction terms against the model with ONLY the multi_genre and runtime interaction (Appendix Figure 5).
 
-```{r}
-
-interaction_genre_run_vote <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_language + multi_genre*runtime + multi_genre*vote_average)
-
-
-tidy(interaction_genre_run_vote) |>
-  kable(digits = 3)
-
-
-glance(interaction_genre_run_vote) |> select(r.squared, adj.r.squared, AIC, BIC)
-```
-
-```{r}
-kable(anova(interaction_genreruntime, interaction_genre_run_vote), format = "markdown", digits = 3)
-```
-
-From the F-test results alone, we have strong evidence to suggest that adding the interaction effect between multi_genre and vote_average does not significantly improve our model—this is indicated by the F-test p-value of 0.577. Additionally, both the $R^2$ value and BIC are worse for the model with the added interaction effect between multi_genre and vote_average, as compared to the model from the previous section without it.
+From the F-test results alone, we have strong evidence to suggest that adding the interaction effect between multi_genre and vote_average does not significantly improve our model—this is indicated by the F-test p-value of 0.577. This proves our hypothesis from the EDA that this interaction term would not be signfiicant. Additionally, both the $R^2$ value and BIC are worse for the model with the added interaction effect between multi_genre and vote_average, as compared to the model from the previous section without it (Appendix Figure 6).
 
 Our output also continues to prove that multi_language is not a useful predictor variable, so we will remove it from future consideration; also, we will not put the interaction between multi_genre and vote_average in our final model.
 
@@ -302,6 +286,13 @@ Our output also continues to prove that multi_language is not a useful predictor
 
 Therefore, below is our final model we decide to use:
 
+```{=tex}
+\begin{align*}
+{\log(\text{revenue})} &= \beta_0 + \beta_1 \cdot \text{voteaverage} + \beta_2 \cdot \log(\text{budget}) \\
+&\quad + \beta_3 \cdot \text{runtime} + \beta_4 \cdot \text{year} \\
+&\quad + \beta_5 \cdot \text{multigenreTRUE} + \beta_6 \cdot \text{runtime} :\text{multigenreTRUE} + \epsilon
+\end{align*}
+```
 ```{r}
 #Final model
 final_model <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
@@ -489,4 +480,27 @@ movies |>
 #| label: app-four
 
 vif(base_model)
+```
+
+\(5\)
+
+```{r}
+#| label: app-five
+
+interaction_genre_run_vote <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_language + multi_genre*runtime + multi_genre*vote_average)
+
+
+tidy(interaction_genre_run_vote) |>
+  kable(digits = 3)
+
+
+glance(interaction_genre_run_vote) |> select(r.squared, adj.r.squared, AIC, BIC)
+```
+
+\(6\)
+
+```{r}
+#| label: app-six
+
+kable(anova(interaction_genreruntime, interaction_genre_run_vote), format = "markdown", digits = 3)
 ```
