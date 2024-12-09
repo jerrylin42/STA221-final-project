@@ -297,12 +297,12 @@ Therefore, below we have decided on the following variables for our final model:
 &\quad + \beta_5 \cdot \text{multigenreTRUE} + \beta_6 \cdot \text{runtime} :\text{multigenreTRUE} + \epsilon
 \end{align*}
 ```
-As we were testing this model and checking assumptions, we noticed some concerning evidence of data entry errors. We dove deeper into points that had high standardized residuals and began to look for a pattern in the data. After not finding anything to indicate that a certain genre, language, or runtime length may be causing some sort of abnormality, we looked to log_revenue and log_budget. Interestingly, we found that the ratio between log_revenue and log_budget tended to be much more extreme for points with high standardized residuals, as compared to the average of the entire data set. As such, we looked at a few specific data points to see if there were potential issues; we found data entry errors were present. For instance, the movie *Kiss of the Spider Woman* has a reported budget of \$11, but according to the American Film Institute, the actual budget was north of \$1.5 million. When briefly looking at a few other data points, this was the case for multiple other movies with extreme log_revenue to log_budget ratios as well.
+As we were testing this model and checking assumptions for linear regression, we noticed some concerning evidence of data entry errors. We dove deeper into points that had high standardized residuals and began to look for a pattern in the data. After not finding anything to indicate that a certain genre, language, or runtime length may be causing some sort of abnormality, we looked to log_revenue and log_budget. Interestingly, we found that the ratio between log_revenue and log_budget tended to be abnormally extreme for points with high standardized residuals, as compared to the average of the entire data set. As such, we looked at a few specific data points to see if there were potential issues; we found data entry errors were present. For instance, the movie *Kiss of the Spider Woman* has a reported budget of \$11, but according to the American Film Institute, the actual budget was north of \$1.5 million. When briefly looking at a few other data points, this was the case for multiple other movies with extreme log_revenue to log_budget ratios as well.
 
-As such, we decided to remove these points and create a new data set for our final model. In total, 61 movies were removed. We checked linear regression assumptions for the data set without these points, which can be found in the appendix (Appendix Figures 8 and 9). The key difference is that constant variance was not satisfied before, but it appears to be mostly satisfied now.
+The main issue was that we have no way of parsing through the entire dataset and checking which ones had actual entry errors. As such, we decided to filter out these points using a sort of proxy-filter and create a new data set to use for our final model. The filter was to remove points that were +/- 3 standard deviations away from the mean ratio between log_revenue and log_budget. Although this won't be an entirely accurate filter (and may even take out some legitimate data points, such as movies that made much more than they spent), we decided this was the best and most efficient way to attempt to control for inaccurate data, as many data entry errors did indeed result in extreme ratios. In total, 61 movies were removed. We checked linear regression assumptions for the full data set with these points still included, which can be found in the appendix (Appendix Figures 8 and 9). The assumptions analysis for the updated dataset is below. The key difference from removing these data entry errors is that constant variance was not satisfied before, but it appears to be much closer to being satisfied now.
 
 ```{r}
-
+#Final model fit using original data
 final_model <- lm(data = movies, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
 
 data_augmented <- augment(final_model)
@@ -343,20 +343,22 @@ ggplot(data = data_augmented_nooutliers, aes(x =.fitted, y = .std.resid)) +
   geom_point() +
   geom_hline(yintercept = 0, color = "red", size = 1) +
   labs(
-    title = "Standardized Residuals vs. Fitted Values",
+    title = "Standardized Residuals vs. Fitted Values
+    (With entry errors removed)",
     x = "Fitted Values",
     y = "Standardized Residuals"
   )
 ```
 
-The constant variance condition appears to be mostly satisfied, and the plot is much less skewed than the constant variance plot for the model with obvious data entry errors present (Appendix Figure 8). Our model meets the linearity assumption because we cannot predict with strong accuracy if a residual will be positive or negative.
+Based on the new residual vs fitted value plot above, constant variance condition appears to be satisfied to a much better extent compared to this same plot using the original dataset before the data entry error removals, and the plot is much less skewed than the constant variance plot for the model with obvious data entry errors present (Appendix Figure 8). We will assume that our model meets the linearity assumption because we cannot predict with strong accuracy if a residual will be positive or negative.
 
 ```{r}
 data_augmented_nooutliers |> 
   ggplot(aes(x = .resid)) +
   geom_histogram() +
   labs(
-    title = "Histogram of Residuals",
+    title = "Histogram of Residuals
+    (With entry errors removed)",
     x = "Residuals",
     y = "Count"
   )
@@ -365,7 +367,7 @@ data_augmented_nooutliers |>
 
 Additionally, our model meets the normality assumption. According to the histogram of residuals, we can see that the residuals are approximately normally distributed, following a bell-curve shape centered around 0. Our model does not necessarily meet the independence assumption because we cannot confidently distinguish movie sequels or easily identify whether movies belong to the same company or franchise. This limitation could introduce bias into our data since viewers often tend to watch sequels, movies within franchises, or movies produced by the same company (e.g., Marvel movies have a certain audience that tend to watch all their movies to keep up with the franchise, contributing to the huge revenue they make), which could create a dependency between observations.
 
-As a whole, we conclude that our model meets the linearity, constant variance, and normality requirements, but fails to meet the assumption of independence in a few limited cases.
+As a whole, we will assume that our model meets the linearity, constant variance, and normality of residual requirements, but fails to meet the assumption of independence in a few cases.
 
 ## Results
 
@@ -385,7 +387,7 @@ glance(final_model_nooutliers) |> select(r.squared, adj.r.squared, AIC, BIC)
 &\quad - 1.075 \cdot \text{multigenreTRUE} + 0.010 \cdot \text{runtime}:\text{multigenreTRUE}
 \end{align*}
 ```
-When fitting our final model based on the data without the likely data entry error points present, we saw that our $R^2$ value increased by over 4% (from 46.556% to 50.650%). In terms of the BIC, this model experienced a nearly 1500 point decrease from the model using the data set with potential entry errors. We believe this is more than enough evidence to suggest that our model does a better job of predicting movie revenue when movies with extreme log_revenue to log_budget ratios are not present in the data, because they are likely the result of data entry errors. It is important to note that ultimately, removing all these movies is not perfect, as it is entirely possible that a movie may have a very low budget and very high revenue, or vice versa.
+When fitting our final model based on the data without the likely data entry error points present, we saw that our $R^2$ value increased by over 4% (from 46.556% to 50.650%). In terms of the BIC, this model experienced a nearly 1500 point decrease from the model using the data set with potential entry errors. We believe this is more than enough evidence to suggest that our model does a better job of predicting movie revenue when movies with extreme log_revenue to log_budget ratios are not present in the data, because they are likely the result of data entry errors. It is important to note that ultimately, as mentioned in the analysis, that removing these movies based off the filter we used is not perfect, as it is entirely possible that a movie may have a very low budget and very high revenue, or vice versa. However, the size of our dataset being so large means that these removals of legitimate data points may not be a cause of significant concern.
 
 The p-values for every coefficient are near-zero, suggesting that all these coefficients are statistically significant for predicting the log(revenue).
 
