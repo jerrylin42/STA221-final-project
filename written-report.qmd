@@ -23,6 +23,7 @@ library(dplyr)
 library(patchwork)
 library(rms)
 library(kableExtra)
+library(broom)
 
 movies <- read_csv("data/final_vote_filtered_movie_data.csv")
 ```
@@ -376,13 +377,12 @@ As a whole, we will assume that our model meets the linearity, constant variance
 ### Final Model
 
 ```{r}
-tidy(final_model_nooutliers) |>
+tidy(final_model_nooutliers, conf.int = TRUE) |>
   kable(digits = 3)
 
 glance(final_model_nooutliers) |>
   select(r.squared, adj.r.squared, AIC, BIC) |>
   kable(digits = 3)
-
 ```
 
 ```{=tex}
