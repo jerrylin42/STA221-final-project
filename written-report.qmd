@@ -384,7 +384,7 @@ The p-values for every coefficient are near-zero, suggesting that all these coef
 
 -   For a 10 percent increase in budget, we would expect the revenue to multiply by 1.09, holding all other variables constant.
 
--   For a one minute increase in runtime, we would expect the revenue to multiply by .99, holding all other variables constant.
+-   For a ten minute increase in runtime, we would expect the revenue to multiply by 0.878 (exp(-0.013*10), holding all other variables constant.
 
 -   For a one year increase in production year, we would expect the revenue to multiply by .99, holding all other variables constant. According to the confidence interval of \[-0.015, -0.011\], 0 is not included which means it is statistically significant. However, in the context of the data, for every one year increase in year, we can expect the revenue to decrease by \$10 per \$1,000 of revenue (1,000(1 − 0.99)), holding all other variables constant. A \$10 decrease is not practically significant because it is a very small amount in terms of the greater amounts of revenue being made.
 
