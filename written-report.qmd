@@ -346,13 +346,13 @@ ggplot(data = data_augmented_nooutliers, aes(x =.fitted, y = .std.resid)) +
   geom_hline(yintercept = 0, color = "red", size = 1) +
   labs(
     title = "Standardized Residuals vs. Fitted Values
-    (With entry errors removed)",
+(With entry errors removed)",
     x = "Fitted Values",
     y = "Standardized Residuals"
   )
 ```
 
-Based on the new residual vs fitted value plot above, constant variance condition appears to be satisfied to a much better extent compared to this same plot using the original dataset before the data entry error removals, and the plot is much less skewed than the constant variance plot for the model with obvious data entry errors present (Appendix Figure 8). We will assume that our model meets the linearity assumption because we cannot predict with strong accuracy if a residual will be positive or negative.
+Based on the new residual vs fitted value plot above, constant variance condition appears to be satisfied to a much better extent compared to this same plot using the original data set before the data entry error removals, and the plot is much less skewed than the constant variance plot for the model with obvious data entry errors present (Appendix Figure 8). We will assume that our model meets the linearity assumption because we cannot predict with strong accuracy if a residual will be positive or negative.
 
 ```{r}
 data_augmented_nooutliers |> 
@@ -360,7 +360,7 @@ data_augmented_nooutliers |>
   geom_histogram() +
   labs(
     title = "Histogram of Residuals
-    (With entry errors removed)",
+(With entry errors removed)",
     x = "Residuals",
     y = "Count"
   )
@@ -558,3 +558,58 @@ data_augmented |>
 ```
 
 Our model meets the normality assumption. According to the Histogram of Residuals, we can see that the residuals are approximately normally distributed, following a bell-curve shape centered around 0. Our model does not necessarily meet the independence assumption because we cannot confidently distinguish movie sequels or easily identify whether movies belong to the same company or franchise. This limitation could introduce bias into our data since viewers often tend to watch sequels, movies within franchises, or movies produced by the same company (e.g., Marvel movies have a certain audience that tend to watch all their movies to keep up with the franchise, contributing to the huge revenue they make), which could create a dependency between observations.
+
+```{r}
+
+marvel <- movies |>
+  separate_rows(production_companies, sep = ",") |> 
+  mutate(production_companies = str_trim(production_companies)) |>
+  filter(production_companies == "Marvel Studios")
+
+warnerbros <- movies |>
+  separate_rows(production_companies, sep = ",") |> 
+  mutate(production_companies = str_trim(production_companies)) |>
+  filter(production_companies == "Warner Bros. Pictures")
+  
+disney <- movies |>
+  separate_rows(production_companies, sep = ",") |> 
+  mutate(production_companies = str_trim(production_companies)) |>
+  filter(production_companies == "Walt Disney Pictures")
+
+final_model_marvel <- lm(data = marvel, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
+
+final_model_warnerbros <- lm(data = warnerbros, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
+
+final_model_disney <- lm(data = disney, log_revenue ~ vote_average + log_budget + runtime + year + multi_genre + multi_genre*runtime)
+
+marvel <- augment(final_model_marvel)
+disney <- augment(final_model_disney)
+warnerbros <- augment(final_model_warnerbros)
+
+ggplot(data = warnerbros, aes(x =.fitted, y = .std.resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", size = 1) +
+  labs(
+    title = "Warner Bros. Standardized Residuals vs. Fitted Values",
+    x = "Fitted Values",
+    y = "Standardized Residuals"
+  )
+
+ggplot(data = disney, aes(x =.fitted, y = .std.resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", size = 1) +
+  labs(
+    title = "Disney Standardized Residuals vs. Fitted Values",
+    x = "Fitted Values",
+    y = "Standardized Residuals"
+  )
+
+ggplot(data = marvel, aes(x =.fitted, y = .std.resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", size = 1) +
+  labs(
+    title = "Marvel Standardized Residuals vs. Fitted Values",
+    x = "Fitted Values",
+    y = "Standardized Residuals"
+  )
+```
