@@ -249,7 +249,7 @@ Based off of our output for the base model (no interaction terms), it looks as i
 
 We were also surprised that the year coefficent has a negative value, as that would imply that as the movie is more recent, the log(revenue) decreases, which is interesting. We are now interested in analyzing whether the added interaction terms are worth adding in the model to use as predictors of the log(revenue).
 
-We tested for multicollinearity by using VIF; all of our predictor variables have a VIF of less than 2. As such, it seems as if there are no variables that raise issues of multicollinearity (Appendix Figure 4).
+We tested for multicollinearity by using VIF; all of our predictor variables have a VIF of less than 2. Thus, it seems as if there are no variables that raise issues of multicollinearity (Appendix Figure 4).
 
 ### Investigating Multi-Genre/Runtime Interaction
 
