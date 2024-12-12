@@ -77,21 +77,21 @@ movies <- movies |>
 
 Variables of interest:
 
-vote_average: This is the average rating given to the movie by viewers. We expect this to be correlated with the response variable, as good ratings will encourage more people to go see the movie, and if someone likes the movie they will be more likely to recommend it to their friends.
+vote_average: The average rating given to the movie by viewers. We expect this to be correlated with the response, as good ratings will encourage more people to go see the movie.
 
-spoken_languages: This is the number of different languages spoken in the movie. We hypothesize that if a movie has more languages in it, it will appeal to a broader audience and therefore earn greater revenue. We created a new variable from this variable called "multi_language" that categorizes movies with multiple languges as "TRUE" and movies with one language as "FALSE."
+spoken_languages: The number of different languages spoken in the movie. We hypothesize that movies with more languages will appeal to broader audiences, earning greater revenue. We created a new variable from this variable called "multi_language" that categorizes movies with multiple languges as "TRUE" and movies with one language as "FALSE."
 
-budget: This is the amount of money spent on producing the movie. We expect movies with a larger budget to earn more revenue, as the production company has more resources to put into the movie.
+budget: The amount of money spent on producing the movie. We expect movies with a larger budget to earn more revenue, as the production company has more resources to put into the movie.
 
 runtime: This is the length of the movie. We think that people may be more willing to see shorter/average length movies, as it is less of a time commitment for them.
 
 release_date: This indicates the day, month, and year that the movie was released. We expect that the year will greatly impact gross revenue because, for instance, movies released right before or during the pandemic will have very low gross revenue as no one was able to go to the theaters. We created a new variable from this variable called "year" that only accounts for only the year (yyyy) that the movie was released in instead of the original date (yyyy/mm/dd).
 
-genres: This is a genre or list of genres associated with the movie. We expect movies tagged with more than one genre to appeal to a wider audience, thus driving up the number of people who go to see the movie and increasing gross revenue. We created a new variable from this variable called "multi_genre" that categorizes movies with multiple genres as "TRUE" and movies with one genre as "FALSE."
+genres: The genre or list of genres associated with the movie. We expect movies tagged with more than one genre to appeal to wider audiences, driving up the number of people who go to see the movie and increasing gross revenue. We created a new variable from this variable, "multi_genre", that categorizes multiple genres movies as "TRUE" and single genre movies as "FALSE."
 
 Method of approach:
 
-We plan to use multiple linear regression to predict gross revenue, but we will log transform gross revenue because we can see from our EDA (below) that revenue is extremely skewed in its original form.
+We plan to use multiple linear regression to predict gross revenue, with gross revenue log-transformed as we can see from our EDA (below) that revenue is very skewed in its original form.
 
 ```{r}
 movies <- movies |>
